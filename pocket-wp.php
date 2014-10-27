@@ -89,8 +89,9 @@ function pwp_settings_section_callback(  ) {
 				<li>Ensure you select <strong><em>Retrieve</em></strong> under the <strong><em>Permissions section</em></strong> and <strong></m>Web</em></strong> under the <strong><em>Platforms</em></strong> section. 
 				</li>
 				<li>Once you have done this, copy your <strong><em>Consumer Key</em></strong> from the list of apps and paste into the field below.</li>
-				<li>Click Save Changes to save the key.</li>
-				<li>Once the settings have been saved click the <strong> Authorize</strong> link below. You may be directed to the pocket website.</li>
+				<li>Click Save Changes to save the key. You will be sent to Pocket to authorize your app.</li>
+				<li>Click the <strong><em>Authorize</em></strong> button and you will be brought back to this page.</li>
+			</ol>
 
 	   	', 'wordpress' );
 
@@ -100,7 +101,7 @@ function pwp_consumer_key_field_render(  ) {
 	$options = get_option( 'pwp_settings' );
 	$pwp_consumer_key = $options['pwp_consumer_key_field'];
 	?>
-	<input type='text' name='pwp_settings[pwp_consumer_key_field]' value='<?php echo $pwp_consumer_key; ?>'>
+	<input type='text' name='pwp_settings[pwp_consumer_key_field]' size="50" value='<?php echo $pwp_consumer_key; ?>'>
 	<?php
 
 	if( isset($_GET['settings-updated']) && $_GET['settings-updated'] == true ){
@@ -114,6 +115,9 @@ function pwp_options_page(  ) {
 		<?php
 		settings_fields( 'pwp_pluginPage' );
 		do_settings_sections( 'pwp_pluginPage' );
+		?>
+		<p class="pwp-save-changes-notice">When you click Save Changes you will be taken to Pocket to authorize your app</p>
+		<?php
 		submit_button();
 		?>
 		
