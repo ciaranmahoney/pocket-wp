@@ -174,10 +174,10 @@ function pwp_get_tokens(){
 		   )
 		 ));
 
-		 // (3) Redirect user to Pocket to continue authorization
-		 echo '<meta http-equiv="refresh" content="0;url=' . 'https://getpocket.com/auth/authorize?request_token=' . urlencode($oAuthRequestToken[1]) . '&redirect_uri=' . urlencode("http://localhost/pocket-test/wp-admin/options-general.php?page=pocket_wp");
-
 		update_option( 'pwp_request_token', $oAuthRequestToken[1] );
+
+		 // (3) Redirect user to Pocket to continue authorization
+		echo '<meta http-equiv="refresh" content="0;url=' . 'https://getpocket.com/auth/authorize?request_token=' . urlencode($oAuthRequestToken[1]) . '&redirect_uri=' . site_url() . "/wp-admin/options-general.php?page=pocket_wp";
 	}
 } // End contact Pocket to get access token
 
