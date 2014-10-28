@@ -26,7 +26,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-defined('ABSPATH') or die("No script kiddies please!");
+//defined('ABSPATH') or die("No script kiddies please!");
 
 // Display activation notice with setup information when plugin is activated
 register_activation_hook( __FILE__,'pwp_activation_notice');
@@ -79,33 +79,35 @@ function pwp_settings_section_callback(  ) {
 	echo __( 
 		'
 			<h2>Pocket WP</h2>
-			<p>If you are having issues, please let me know on Twitter <a href="https://twitter.com/ciaransm">@ciaransm</a></p>
-
+			<p>Plugin by <a href="http://ciaranmahoney.me" target="_blank">Ciaran Mahoney</a></p>
 			<h3>Setup Instructions</h3>
 
 			<ol>
-				<li>To get started you will need to create an application on the Pocket Developer\'s site. Visit the <a href="http://getpocket.com/developer/apps/new">Pocket Developers New App page</a> and create your application.
-				</li>
-				<li>Ensure you select <strong><em>Retrieve</em></strong> under the <strong><em>Permissions section</em></strong> and <strong></m>Web</em></strong> under the <strong><em>Platforms</em></strong> section. 
+				<li>To get started you will need to create an application on the Pocket Developer\'s site. Visit the <a href="http://getpocket.com/developer/apps/new">Pocket Developers New App page</a> and create your application. Ensure you select <strong><em>Retrieve</em></strong> under the <strong><em>Permissions </em></strong>section and <strong><em>Web</em></strong> under the <strong><em>Platforms</em></strong> section. 
 				</li>
 				<li>Once you have done this, copy your <strong><em>Consumer Key</em></strong> from the list of apps and paste into the field below.</li>
-				<li>Click Save Changes to save the key. You will be sent to Pocket to authorize your app.</li>
-				<li>Click the <strong><em>Authorize</em></strong> button and you will be brought back to this page.</li>
+				<li>Click <em><strong>Save Changes</em></strong> to save the key and get a <strong><em>Request Token</em></strong> from Pocket. You may be sent to Pocket to authorize your app (if so sign in and click the yellow Authorize button).</li>
+				<li>After you have authorized your app with Pocket, you will be brought back to this page.</li>
+				<li>Click the green <strong><em>GET ACCESS KEY</strong></em> button below to authorize your access key from Pocket. Please do this once only. You should get a popup to confirm your access key was authenticated successfully. If you get the authentication failed message, you just need to click <strong><em>Save Changes</strong></em> and then <strong><em>GET ACCESS KEY</strong></em> again. </li>
 			</ol>
+			<p>If you are having issues, please let me know on Twitter <a href="https://twitter.com/ciaransm">@ciaransm</a></p>
 
 	   	', 'wordpress' );
 
 }
 
 function pwp_consumer_key_field_render(  ) { 
-	$options = get_option( 'pwp_settings' );
-	$pwp_consumer_key = $options['pwp_consumer_key_field'];
+	$pwp_options = get_option( 'pwp_settings' );
+	$pwp_consumer_key = $pwp_options['pwp_consumer_key_field'];
 	?>
 	<input type='text' name='pwp_settings[pwp_consumer_key_field]' size="50" value='<?php echo $pwp_consumer_key; ?>'>
+	<p>Request: <?php echo get_option(' pwp_request_token'); ?> </p>
+	<p>Access: <?php print_r( get_option('pwp_access_token')); ?> </p>
+
 	<?php
 
 	if( isset($_GET['settings-updated']) && $_GET['settings-updated'] == true ){
-       pwp_get_tokens();
+       pwp_get_request_token();
    	}
 }
 
@@ -116,16 +118,18 @@ function pwp_options_page(  ) {
 		settings_fields( 'pwp_pluginPage' );
 		do_settings_sections( 'pwp_pluginPage' );
 		?>
-		<p class="pwp-save-changes-notice">When you click Save Changes you will be taken to Pocket to authorize your app</p>
+		<p class="pwp_save_changes_notice">When you click Save Changes you will be taken to Pocket to authorize your app</p>
 		<?php
 		submit_button();
 		?>
 		
 	</form>
+	<p class="pwp_get_access_key_notice">Please click this button once only. If you get a failed message, try clicking Save Changes above, then try again.</p>
+	<a href="#" id="pwp_get_access_key_button">GET ACCESS KEY</a>
 	<?php
 
-}
-//End options page setup
+
+} //End options page setup
 
 // Initialize options page and add to menu
 add_action( 'admin_menu', 'pwp_add_admin_menu' );
@@ -137,60 +141,105 @@ function pwp_cURL($url, $post) {
 	$cURL = curl_init();
 	curl_setopt($cURL, CURLOPT_URL, $url);
 	curl_setopt($cURL, CURLOPT_HEADER, 0);
-	curl_setopt($cURL, CURLOPT_HTTPHEADER, array('Content-type: application/x-www-form-urlencoded;charset=UTF-8'));
+	curl_setopt($cURL, CURLOPT_HTTPHEADER, array('Content-type: application/x-www-form-urlencoded;charset=UTF-8', 'X-Accept: application/x-www-form-urlencoded'));
 	curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($cURL, CURLOPT_TIMEOUT, 5);
 	curl_setopt($cURL, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($cURL, CURLOPT_POST, count($post));
 	curl_setopt($cURL, CURLOPT_POSTFIELDS, http_build_query($post));
 	$output = curl_exec($cURL);
+
+	if($errno = curl_errno($cURL)) {
+    	$error_message = curl_strerror($errno);
+    	echo "cURL error ({$errno}):\n {$error_message}";
+	}
+
 	curl_close($cURL);
 
 	return $output;
 } //End cURL function
 
-// Contact Pocket to get access token
-function pwp_get_tokens(){
-	$options = get_option( 'pwp_settings' );
-	$pwp_consumer_key = $options['pwp_consumer_key_field']; // gets consumer key saved in option page.
+// Contact Pocket to get request token
+function pwp_get_request_token(){
+	$pwp_options = get_option( 'pwp_settings' );
+	$pwp_consumer_key = $pwp_options['pwp_consumer_key_field']; // gets consumer key saved in option page.
 
 	$pwp_options_url = site_url() . '/wp-admin/options-general.php?page=pocket_wp';
 
-	//If access token is already set, use it to get request token.
-	if (isset ($_GET["token"])) {
-		$oAuthRequest = pwp_cURL('https://getpocket.com/auth/authorize', 
+	$oAuthRequestToken = explode('=', pwp_cURL(
+	   'https://getpocket.com/v3/oauth/request',
+	   array(
+	  	 'consumer_key' => $pwp_consumer_key,
+	  	 'redirect_uri' => $pwp_options_url
+	   )
+	 ));
+
+	update_option( 'pwp_request_token', $oAuthRequestToken[1] );
+
+	// (3) Redirect user to Pocket to continue authorization
+	 echo '<meta http-equiv="refresh" content="0;url=https://getpocket.com/auth/authorize?request_token=' . urlencode($oAuthRequestToken[1]) . '&redirect_uri=' . urlencode(site_url()) . "/wp-admin/options-general.php?page=pocket_wp";
+
+} // End contact Pocket to get access token
+
+// Create AJAX call for authorize button.
+add_action( 'admin_footer', 'pwp_authorize_button' ); // Write our JS below here
+function pwp_authorize_button () {
+	?>
+
+	<script type="text/javascript" >
+	jQuery(document).ready(function($) {
+
+		$("#pwp_get_access_key_button").click(function(){ 
+			var data = {
+				'action': 'pwp_click_authorization_button'
+			};
+
+			// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+			$.post(ajaxurl, data, function(response) {
+				if (response == 0){
+					alert('Access key authentication was successfull! Setup complete!')
+				} else {
+					alert('Access key authentication failed. Please click save changes to retrieve a new request token, then try authenticating again.')
+				};
+				location.reload();				
+			});
+		});
+	});
+	</script> 
+
+	<?php
+}
+
+// Function to convert the request token to an access token
+add_action( 'wp_ajax_pwp_click_authorization_button', 'pwp_get_access_token' );
+function pwp_get_access_token(){
+	$pwp_options = get_option( 'pwp_settings' );
+	$pwp_consumer_key = $pwp_options['pwp_consumer_key_field'];
+	$pwp_request_token = get_option('pwp_request_token');
+
+	$pwp_oAuthRequest = pwp_cURL('https://getpocket.com/v3/oauth/authorize', 
 			array(
 				'consumer_key' => $pwp_consumer_key,
-				'code' => $_GET['token']
+				'code' => $pwp_request_token
 				)
 			);
 
-		$access_token = explode('&', $oAuthRequest);
-		$access_token = $access_token[0];
-		$access_token = explode('=', $access_token);
-		$access_token = $access_token[1];
-	} else {
-		$oAuthRequestToken = explode('=', pwp_cURL(
-		   'https://getpocket.com/v3/oauth/request',
-		   array(
-		  	 'consumer_key' => $pwp_consumer_key,
-		  	 'redirect_uri' => $pwp_options_url."?consumer_key=$pwp_consumer_key"
-		   )
-		 ));
+	$pwp_access_token = explode('&', $pwp_oAuthRequest);
+	$pwp_access_token = $pwp_access_token[0];
+	$pwp_access_token = explode('=', $pwp_access_token);
+	$pwp_access_token = $pwp_access_token[1];
 
-		update_option( 'pwp_request_token', $oAuthRequestToken[1] );
-
-		 // (3) Redirect user to Pocket to continue authorization
-		echo '<meta http-equiv="refresh" content="0;url=' . 'https://getpocket.com/auth/authorize?request_token=' . urlencode($oAuthRequestToken[1]) . '&redirect_uri=' . site_url() . "/wp-admin/options-general.php?page=pocket_wp";
-	}
-} // End contact Pocket to get access token
-
-// Get Pocket links array
-function pwp_get_links () {
-
+	update_option( 'pwp_access_token', $pwp_access_token );
+	update_option( 'pwp_oauth_request', $pwp_oAuthRequest );
 }
 
-// Display Pocket links in Widget
-function pwp_widget(){
+// // Get Pocket links array
+// function pwp_get_links () {
+// 	$pwp_request_token = get_option('pwp_request_token');
+// 	$pwp_url = 123;
+// }
 
-}
+// // Display Pocket links in Widget
+// function pwp_widget(){
+
+// }
