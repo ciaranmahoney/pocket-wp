@@ -124,7 +124,7 @@ function pwp_options_page(  ) {
 		?>
 		
 	</form>
-	<p class="pwp_get_access_key_notice">Please click this button once only. If you get a failed message, try clicking Save Changes above, then try again.</p>
+	
 	<a href="#" id="pwp_get_access_key_button">GET ACCESS KEY</a>
 	<?php
 
@@ -137,7 +137,7 @@ add_action( 'admin_init', 'pwp_settings_init' );
 
 
 // cURL function
-function pwp_cURL($url, $post) {
+function pwp_cURL($url, $post, $returnstring) {
 	$cURL = curl_init();
 	curl_setopt($cURL, CURLOPT_URL, $url);
 	curl_setopt($cURL, CURLOPT_HEADER, 0);
@@ -156,7 +156,13 @@ function pwp_cURL($url, $post) {
 
 	curl_close($cURL);
 
-	return $output;
+	if ($returnstring){
+		return $output; // Returns output as a string.
+
+	} else { 
+		return json_decode($output, true); // Provide alternative json output if array is needed (for displaying actual Pocket links).
+	}
+	
 } //End cURL function
 
 // Contact Pocket to get request token
@@ -171,13 +177,14 @@ function pwp_get_request_token(){
 	   array(
 	  	 'consumer_key' => $pwp_consumer_key,
 	  	 'redirect_uri' => $pwp_options_url
-	   )
+	   ), 
+	   true
 	 ));
 
 	update_option( 'pwp_request_token', $oAuthRequestToken[1] );
 
 	// (3) Redirect user to Pocket to continue authorization
-	 echo '<meta http-equiv="refresh" content="0;url=https://getpocket.com/auth/authorize?request_token=' . urlencode($oAuthRequestToken[1]) . '&redirect_uri=' . urlencode(site_url()) . "/wp-admin/options-general.php?page=pocket_wp";
+	 echo '<meta http-equiv="refresh" content="0;url=https://getpocket.com/auth/authorize?request_token=' . urlencode($oAuthRequestToken[1]) . '&redirect_uri=' . urlencode(site_url()) . urlencode("/wp-admin/options-general.php?page=pocket_wp&pwpsuccess=true/");
 
 } // End contact Pocket to get access token
 
@@ -196,14 +203,41 @@ function pwp_authorize_button () {
 
 			// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 			$.post(ajaxurl, data, function(response) {
-				if (response == 0){
-					alert('Access key authentication was successfull! Setup complete!')
+
+				if (response == 0) {
+					window.location = "?page=pocket_wp&pwpaccess=true";
+					console.log(getQueryVariable('pwpaccess'));
 				} else {
-					alert('Access key authentication failed. Please click save changes to retrieve a new request token, then try authenticating again.')
-				};
-				location.reload();				
+					window.location = "?page=pocket_wp&pwpaccess=false";
+					console.log(getQueryVariable('pwpaccess'));
+				}				
 			});
 		});
+
+		//Function to parse query string
+		function getQueryVariable(variable){
+	       var query = window.location.search.substring(1);
+	       var vars = query.split("&");
+	       for (var i=0;i<vars.length;i++) {
+	               var pair = vars[i].split("=");
+	               if(pair[0] == variable){return pair[1];}
+	       }
+	       return(false);
+		};
+		
+		if(getQueryVariable('pwpaccess') == "true"){
+			//If access key returns successfull, show success notice
+			$('#pwp_get_access_key_button').hide().before('<div class="pwp_success">Access key authentication was successfull! Setup complete!</div>');
+
+
+		} else if (getQueryVariable('pwpaccess') == "false"){
+			// If returns false, show failed notice.
+			$('#pwp_get_access_key_button').before('<div class="pwp_warning">Access key authentication failed. Please click save changes to retrieve a new request token, then try authenticating again.</div>');
+		} else {
+			$('#pwp_get_access_key_button').before('<div class="pwp_notice">Please click this button once only. If you get a failed message, try clicking Save Changes above, then try again.</div>');
+		}
+	
+
 	});
 	</script> 
 
@@ -221,7 +255,8 @@ function pwp_get_access_token(){
 			array(
 				'consumer_key' => $pwp_consumer_key,
 				'code' => $pwp_request_token
-				)
+				),
+			true
 			);
 
 	$pwp_access_token = explode('&', $pwp_oAuthRequest);
@@ -233,13 +268,58 @@ function pwp_get_access_token(){
 	update_option( 'pwp_oauth_request', $pwp_oAuthRequest );
 }
 
-// // Get Pocket links array
-// function pwp_get_links () {
-// 	$pwp_request_token = get_option('pwp_request_token');
-// 	$pwp_url = 123;
-// }
+// Get Pocket links array
+function pwp_get_links ($pwp_count, $pwp_tags) {
+	$pwp_options = get_option( 'pwp_settings' );
+	$pwp_consumer_key = $pwp_options['pwp_consumer_key_field'];
+	$pwp_access_token = get_option('pwp_access_token');
 
-// // Display Pocket links in Widget
-// function pwp_widget(){
+	$pwp_pocket_request = pwp_cURL('https://getpocket.com/v3/get',
+		array(
+			'consumer_key' 	=> $pwp_consumer_key,
+			'access_token' 	=> $pwp_access_token,
+			'tag'			=> $pwp_tags,
+			'count'			=> $pwp_count
+			),
+		false
+		);
+	return $pwp_pocket_request;
+}
 
-// }
+// Adding a shortcode to display Pocket links in a post/page
+add_shortcode('pocket_links', 'pwp_shortcode' );
+function pwp_shortcode ($atts, $content = null){
+	extract( shortcode_atts( array(
+							 'count' => '',
+							 'tags' => ''
+							), $atts 
+			)
+	);
+
+	//Get the output from the cURL request
+	$pwp_items = pwp_get_links($count, $tags);
+
+	//Loop over cURL output
+    foreach( $pwp_items['list'] as $item){
+    	foreach($item as $key => $value){
+    		echo $key . " | " . $value;
+
+    	}
+    	echo "<br/><br/>";
+    }
+
+    echo "<br/><br/>";
+    print_r($pwp_items);
+	echo "<br/><br/>";
+
+	// foreach ($pwp_items as $item){
+	// 	echo $item;
+	// }
+
+}
+
+
+// Display Pocket links in Widget
+function pwp_widget(){
+
+}
