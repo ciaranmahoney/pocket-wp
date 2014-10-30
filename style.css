@@ -1,0 +1,22 @@
+ul.pwp_widget_list li {
+	margin-bottom: 10px;
+	list-style: none;
+}
+
+span#pwp_plugin_credit_widget {
+	font-size: 0.7em;
+}
+
+span.pocket-tag {
+	background: #E0E0E0;
+	padding: 3px;
+	border-radius: 3px;
+	font-size: 9px;
+	margin-right: 10px;
+	border: 1px solid #DADADA;
+}
+
+p#pwp_plugin_credit_sc {
+	font-size: 10px;
+	padding: 3px;
+}

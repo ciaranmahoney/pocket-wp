@@ -279,6 +279,8 @@ function pwp_get_links ($pwp_count, $pwp_tags) {
 			'consumer_key' 	=> $pwp_consumer_key,
 			'access_token' 	=> $pwp_access_token,
 			'tag'			=> $pwp_tags,
+			'detailType'	=> 'complete',
+			'state'			=> 'all',
 			'count'			=> $pwp_count
 			),
 		false
@@ -316,7 +318,9 @@ function pwp_get_links ($pwp_count, $pwp_tags) {
     	}
 
     	array_push($pwp_links_output, 
-    		array($pwp_url, $pwp_title, $pwp_excerpt));
+    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags
+    		)
+    	);
     }
 	return $pwp_links_output;
 }
@@ -337,7 +341,7 @@ function pwp_shortcode ($atts, $content = null){
 
 	// Loop through array and get link details.
 	foreach($pwp_items as $item){
-		echo '<h3><a href="' . $item[0] . '" class="pwp_item_link" target="_blank">' . $item[1] . '</a></h3>';
+		echo '<h3><a href="' . $item[0] . '" class="pwp_item_sc_link" target="_blank">' . $item[1] . '</a></h3>';
 		
 		//Display excerpt if excerpt is not set to no.	
 	   	if (strtolower($excerpt) != 'no'){
@@ -345,9 +349,9 @@ function pwp_shortcode ($atts, $content = null){
 	  	}
   	}
 
-	//print_r($pwp_items); used for testing only
+	//print_r($pwp_items); //used for testing only
 
-    echo '<span id="pwp_plugin_credit_sc"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+    echo '<p id="pwp_plugin_credit_sc"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
 } // end pwp_shortcode
 
 
@@ -383,7 +387,7 @@ class Pwp_Widget extends WP_Widget {
 		//Get the array that was extracted from the cURL request
 		if(! empty( $instance['count'] ) ){
 			$pwp_count = $instance['count'];
-			
+
 		} else {
 			$pwp_count = '5';
 		}
@@ -393,14 +397,14 @@ class Pwp_Widget extends WP_Widget {
 		// Loop through array and get link details.
 		echo '<ul class="pwp_widget_list">';
 		foreach($pwp_items as $item){
-			echo '<li><a href="' . $item[0] . '" class="pwp_item_link" target="_blank">' . $item[1] . '</a>';
+			echo '<li><a href="' . $item[0] . '" class="pwp_item_widget_link" target="_blank">' . $item[1] . '</a>';
 	  	}
 
 	  	echo '</ul>';
 
 	//print_r($pwp_items); used for testing only
 
-    echo '<span id="pwp_plugin_credit_sc"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+    echo '<span id="pwp_plugin_credit_widget"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
 
 
 		echo $args['after_widget'];
@@ -453,7 +457,14 @@ class Pwp_Widget extends WP_Widget {
 }
 
 // register Pocket WP widget
+add_action( 'widgets_init', 'register_pwp_widget' );
 function register_pwp_widget() {
     register_widget( 'Pwp_Widget' );
 }
-add_action( 'widgets_init', 'register_pwp_widget' );
+
+//Register css
+add_action( 'wp_enqueue_scripts', 'pwp_add_stylesheet' );
+function pwp_add_stylesheet() {
+    wp_register_style( 'pwp-style', plugins_url('style.css', __FILE__) );
+    wp_enqueue_style( 'pwp-style' );
+}
