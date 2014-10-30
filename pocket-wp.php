@@ -283,7 +283,42 @@ function pwp_get_links ($pwp_count, $pwp_tags) {
 			),
 		false
 		);
-	return $pwp_pocket_request;
+
+	//Loop over cURL output
+	$pwp_links_output = array();
+
+    foreach( $pwp_pocket_request['list'] as $item){
+
+    	// Check if given url is set. If not, use resolved url.
+    	if ($item['given_url'] != ""){
+    		$pwp_url = $item['given_url'];
+
+    	} else{
+    		$pwp_url = $item['resolved_url'];
+		}
+
+    	//Check if a title is set. If not just use url
+    	if ($item['resolved_title'] != ""){
+    		$pwp_title = $item['resolved_title'];
+
+    	} elseif ($pwp_title = $item['given_title'] != ""){
+    		$pwp_title = $item['given_title'];
+
+    	} else {
+    		$pwp_title = $item['given_url'];
+    	}
+
+    	// Check for excerpt
+    	if ($item['excerpt'] != ''){
+    		$pwp_excerpt = $item['excerpt'];
+    	} else {
+    		$pwp_excerpt = "Sorry, Pocket didn't save an excerpt for this link.";
+    	}
+
+    	array_push($pwp_links_output, 
+    		array($pwp_url, $pwp_title, $pwp_excerpt));
+    }
+	return $pwp_links_output;
 }
 
 // Adding a shortcode to display Pocket links in a post/page
@@ -291,35 +326,134 @@ add_shortcode('pocket_links', 'pwp_shortcode' );
 function pwp_shortcode ($atts, $content = null){
 	extract( shortcode_atts( array(
 							 'count' => '',
-							 'tags' => ''
+							 'tags' => '',
+							 'excerpt' => ''
 							), $atts 
 			)
 	);
 
-	//Get the output from the cURL request
+	//Get the array that was extracted from the cURL request
 	$pwp_items = pwp_get_links($count, $tags);
 
-	//Loop over cURL output
-    foreach( $pwp_items['list'] as $item){
-    	foreach($item as $key => $value){
-    		echo $key . " | " . $value;
+	// Loop through array and get link details.
+	foreach($pwp_items as $item){
+		echo '<h3><a href="' . $item[0] . '" class="pwp_item_link" target="_blank">' . $item[1] . '</a></h3>';
+		
+		//Display excerpt if excerpt is not set to no.	
+	   	if (strtolower($excerpt) != 'no'){
+	   		echo '<p class="pwp_item_excerpt">' . $item[2] . '</p>';
+	  	}
+  	}
 
-    	}
-    	echo "<br/><br/>";
-    }
+	//print_r($pwp_items); used for testing only
 
-    echo "<br/><br/>";
-    print_r($pwp_items);
-	echo "<br/><br/>";
-
-	// foreach ($pwp_items as $item){
-	// 	echo $item;
-	// }
-
-}
+    echo '<span id="pwp_plugin_credit_sc"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+} // end pwp_shortcode
 
 
 // Display Pocket links in Widget
-function pwp_widget(){
+class Pwp_Widget extends WP_Widget {
 
+	/**
+	 * Sets up the widgets name etc
+	 */
+	public function __construct() {
+		parent::__construct(
+			'pwp_widget', // Base ID
+			__('Pocket WP', 'text_domain'), // Name
+			array( 'description' => __( 'Display Pocket links in a widget', 'text_domain' ), ) // Args
+		);
+	}
+
+	/**
+	 * Outputs the content of the widget
+	 *
+	 * @param array $args
+	 * @param array $instance
+	 */
+	public function widget( $args, $instance ) {
+		echo $args['before_widget'];
+
+		if ( ! empty( $instance['title'] ) ) {
+			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ). $args['after_title'];
+		}
+
+		//print_r( pwp_get_links($instance['count'], $instance['tags'])); used for testing only
+
+		//Get the array that was extracted from the cURL request
+		if(! empty( $instance['count'] ) ){
+			$pwp_count = $instance['count'];
+			
+		} else {
+			$pwp_count = '5';
+		}
+
+		$pwp_items = pwp_get_links($pwp_count, $instance['tags']);
+
+		// Loop through array and get link details.
+		echo '<ul class="pwp_widget_list">';
+		foreach($pwp_items as $item){
+			echo '<li><a href="' . $item[0] . '" class="pwp_item_link" target="_blank">' . $item[1] . '</a>';
+	  	}
+
+	  	echo '</ul>';
+
+	//print_r($pwp_items); used for testing only
+
+    echo '<span id="pwp_plugin_credit_sc"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+
+
+		echo $args['after_widget'];
+	}
+
+	/**
+	 * Outputs the options form on admin
+	 *
+	 * @param array $instance The widget options
+	 */
+	public function form( $instance ) {
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		}
+		else {
+			$title = __( 'New title', 'text_domain' );
+		}
+
+		$tags = $instance[ 'tags' ];
+		$count = $instance[ 'count' ];
+		
+		?>
+		<p>
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
+		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+
+		<label for="<?php echo $this->get_field_id('tags');?>"><?php _e('Tags:'); ?> </label>
+		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'tags' ); ?>" name="<?php echo $this->get_field_name( 'tags' ); ?>" type="text" value="<?php echo esc_attr( $tags ); ?>" placeholder="enter tag">
+
+		<label for="<?php echo $this->get_field_id('count');?>"><?php _e('How many links do you want to show? (default is 5)'); ?> </label>
+		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'count' ); ?>" name="<?php echo $this->get_field_name( 'count' ); ?>" type="text" value="<?php echo esc_attr( $count ); ?>" placeholder="Enter number of links to show. Default is 5">
+		</p>
+		<?php 
+	}
+
+	/**
+	 * Processing widget options on save
+	 *
+	 * @param array $new_instance The new options
+	 * @param array $old_instance The previous options
+	 */
+	public function update( $new_instance, $old_instance ) {
+		$instance = array();
+		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance['tags'] = ( ! empty( $new_instance['tags'] ) ) ? strip_tags( $new_instance['tags'] ) : '';
+		$instance['count'] = ( ! empty( $new_instance['count'] ) ) ? strip_tags( $new_instance['count'] ) : '';
+		return $instance;
+
+	}
 }
+
+// register Pocket WP widget
+function register_pwp_widget() {
+    register_widget( 'Pwp_Widget' );
+}
+add_action( 'widgets_init', 'register_pwp_widget' );
