@@ -266,7 +266,7 @@ function pwp_get_access_token(){
 }
 
 // Get Pocket links array
-function pwp_get_links ($pwp_count, $pwp_tags) {
+function pwp_get_links ($pwp_count, $pwp_tag) {
 	$pwp_options = get_option( 'pwp_settings' );
 	$pwp_consumer_key = $pwp_options['pwp_consumer_key_field'];
 	$pwp_access_token = get_option('pwp_access_token');
@@ -275,7 +275,7 @@ function pwp_get_links ($pwp_count, $pwp_tags) {
 		array(
 			'consumer_key' 	=> $pwp_consumer_key,
 			'access_token' 	=> $pwp_access_token,
-			'tag'			=> $pwp_tags,
+			'tag'			=> $pwp_tag,
 			'detailType'	=> 'complete',
 			'state'			=> 'all',
 			'count'			=> $pwp_count
@@ -315,7 +315,7 @@ function pwp_get_links ($pwp_count, $pwp_tags) {
     	}
 
     	array_push($pwp_links_output, 
-    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags
+    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tag
     		)
     	);
     }
@@ -327,7 +327,7 @@ add_shortcode('pocket_links', 'pwp_shortcode' );
 function pwp_shortcode ($atts, $content = null){
 	extract( shortcode_atts( array(
 							 'count' => '',
-							 'tags' => '',
+							 'tag' => '',
 							 'excerpt' => '',
 							 'credit' => ''
 							), $atts 
@@ -335,7 +335,7 @@ function pwp_shortcode ($atts, $content = null){
 	);
 
 	//Get the array that was extracted from the cURL request
-	$pwp_items = pwp_get_links($count, $tags);
+	$pwp_items = pwp_get_links($count, $tag);
 
 	// Loop through array and get link details.
 	foreach($pwp_items as $item){
@@ -385,7 +385,7 @@ class Pwp_Widget extends WP_Widget {
 			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ). $args['after_title'];
 		}
 
-		//print_r( pwp_get_links($instance['count'], $instance['tags'])); used for testing only
+		//print_r( pwp_get_links($instance['count'], $instance['tag'])); used for testing only
 
 		//Get the array that was extracted from the cURL request
 		if(! empty( $instance['count'] ) ){
@@ -395,7 +395,7 @@ class Pwp_Widget extends WP_Widget {
 			$pwp_count = '5';
 		}
 
-		$pwp_items = pwp_get_links($pwp_count, $instance['tags']);
+		$pwp_items = pwp_get_links($pwp_count, $instance['tag']);
 
 		// Loop through array and get link details.
 		echo '<ul class="pwp_widget_list">';
@@ -429,10 +429,10 @@ class Pwp_Widget extends WP_Widget {
 			$title = __( 'New title', 'text_domain' );
 		}
 
-		if(isset($instance[ 'tags' ])) {
-			$tags = $instance[ 'tags' ];
+		if(isset($instance[ 'tag' ])) {
+			$tag = $instance[ 'tag' ];
 		} else {
-			$tags = '';
+			$tag = '';
 		}
 
 		if (isset($instance[ 'count' ])) {
@@ -452,8 +452,8 @@ class Pwp_Widget extends WP_Widget {
 		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
 		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
 
-		<label for="<?php echo $this->get_field_id('tags');?>"><?php _e('Tags:'); ?> </label>
-		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'tags' ); ?>" name="<?php echo $this->get_field_name( 'tags' ); ?>" type="text" value="<?php echo esc_attr( $tags ); ?>" placeholder="enter tag">
+		<label for="<?php echo $this->get_field_id('tag');?>"><?php _e('tag:'); ?> </label>
+		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'tag' ); ?>" name="<?php echo $this->get_field_name( 'tag' ); ?>" type="text" value="<?php echo esc_attr( $tag ); ?>" placeholder="enter tag">
 
 		<label for="<?php echo $this->get_field_id('count');?>"><?php _e('How many links do you want to show? (default is 5)'); ?> </label>
 		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'count' ); ?>" name="<?php echo $this->get_field_name( 'count' ); ?>" type="text" value="<?php echo esc_attr( $count ); ?>" placeholder="Enter number of links to show. Default is 5">
@@ -478,7 +478,7 @@ class Pwp_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 		$instance = array();
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
-		$instance['tags'] = ( ! empty( $new_instance['tags'] ) ) ? strip_tags( $new_instance['tags'] ) : '';
+		$instance['tag'] = ( ! empty( $new_instance['tag'] ) ) ? strip_tags( $new_instance['tag'] ) : '';
 		$instance['count'] = ( ! empty( $new_instance['count'] ) ) ? strip_tags( $new_instance['count'] ) : '';
 		$instance['credit'] = ( ! empty( $new_instance['credit'] ) ) ? strip_tags( $new_instance['credit'] ) : '';
 		return $instance;

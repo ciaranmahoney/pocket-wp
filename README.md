@@ -22,8 +22,8 @@ The basic shortcode is `[pocket_links]` and it accepts four optional arguments:
 ```
 count: [any number] // How many links to display. Default is all.
 excerpt: yes, no //Whether or not to display the excerpt extracted by Pocket. Default is yes.
-tags: [any of your Pocket tags] // Choose to show links from one tag. Currently supports one tag only. Default is any links, tagged or untagged.
-credit: yes, no // Chose to remove author credit. Default is yes (author credit will show).
+tag: [any one of your Pocket tags] // Choose to show links from one tag. Supports one tag only. Default is all links, tagged or untagged.
+credit: yes, no // Choose to remove author credit. Default is yes (author credit will show).
 ```
 
 ## Widget
@@ -33,7 +33,8 @@ The Widget is available to drag and drop into any widgetized sidebars. It has th
 ```
 title // the title for the widget
 count // the number of links to show. Default is 5
-tags: [any of your Pocket tags] // Choose to show links from one tag. Currently supports one tag only. Default is any links, tagged or untagged.
+tag: [any of your Pocket tags] // Choose to show links from one tag. Currently supports one tag only. Default is all links, tagged or untagged.
+author credit: yes, no // Choose to remove author credit. Default is yes (author credit will show).
 ```
 
 ## Screenshots
