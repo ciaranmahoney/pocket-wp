@@ -88,7 +88,7 @@ function pwp_settings_section_callback(  ) {
 				<li>Once you have done this, copy your <strong><em>Consumer Key</em></strong> from the list of apps and paste into the field below.</li>
 				<li>Click <em><strong>Save Changes</em></strong> to save the key and get a <strong><em>Request Token</em></strong> from Pocket. You may be sent to Pocket to authorize your app (if so sign in and click the yellow Authorize button).</li>
 				<li>After you have authorized your app with Pocket, you will be brought back to this page.</li>
-				<li>Click the green <strong><em>GET ACCESS KEY</strong></em> button below to authorize your access key from Pocket. Please do this once only. You should get a popup to confirm your access key was authenticated successfully. If you get the authentication failed message, you just need to click <strong><em>Save Changes</strong></em> and then <strong><em>GET ACCESS KEY</strong></em> again. </li>
+				<li>Click the grey <strong><em>GET ACCESS KEY</strong></em> button below to generate an access key. <strong>Please do this once only.</strong> You should get a popup to confirm your access key was authenticated successfully. If you get the authentication failed message, you just need to click <strong><em>Save Changes</strong></em> and then <strong><em>GET ACCESS KEY</strong></em> again. </li>
 			</ol>
 			<p>If you are having issues, please let me know on Twitter <a href="https://twitter.com/ciaransm">@ciaransm</a></p>
 
@@ -118,14 +118,13 @@ function pwp_options_page(  ) {
 		settings_fields( 'pwp_pluginPage' );
 		do_settings_sections( 'pwp_pluginPage' );
 		?>
-		<p class="pwp_save_changes_notice">When you click Save Changes you will be taken to Pocket to authorize your app</p>
 		<?php
 		submit_button();
 		?>
 		
 	</form>
 	
-	<a href="#" id="pwp_get_access_key_button">GET ACCESS KEY</a>
+	<div id="pwp_get_access_key_button"><p><a href="#"class="button-secondary">GET ACCESS KEY</a></p></div>
 	<?php
 
 
@@ -227,14 +226,14 @@ function pwp_authorize_button () {
 		
 		if(getQueryVariable('pwpaccess') == "true"){
 			//If access key returns successfull, show success notice
-			$('#pwp_get_access_key_button').hide().before('<div class="pwp_success">Access key authentication was successfull! Setup complete!</div>');
+			$('#pwp_get_access_key_button').hide().before('<div class="pwp_success" style="color:green;">Access key authentication was successfull. Setup complete!</div>');
 
 
 		} else if (getQueryVariable('pwpaccess') == "false"){
 			// If returns false, show failed notice.
-			$('#pwp_get_access_key_button').before('<div class="pwp_warning">Access key authentication failed. Please click save changes to retrieve a new request token, then try authenticating again.</div>');
+			$('#pwp_get_access_key_button').before('<div class="pwp_warning" style="color:red;">Access key authentication failed. Please click save changes to retrieve a new request token, then try authenticating again.</div>');
 		} else {
-			$('#pwp_get_access_key_button').before('<div class="pwp_notice">Please click this button once only. If you get a failed message, try clicking Save Changes above, then try again.</div>');
+			$('#pwp_get_access_key_button').before('<div class="pwp_notice">Please click the GET ACCESS KEY button once only. If you get a failed message, try clicking Save Changes above, then try again.</div>');
 		}
 	
 
@@ -331,7 +330,8 @@ function pwp_shortcode ($atts, $content = null){
 	extract( shortcode_atts( array(
 							 'count' => '',
 							 'tags' => '',
-							 'excerpt' => ''
+							 'excerpt' => '',
+							 'credit' => ''
 							), $atts 
 			)
 	);
@@ -351,7 +351,12 @@ function pwp_shortcode ($atts, $content = null){
 
 	//print_r($pwp_items); //used for testing only
 
-    echo '<p id="pwp_plugin_credit_sc"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
+    if (strtolower($credit) == "no") {
+    	// Show nothing
+    } else { 
+    	// Display author credit links
+    	echo '<p id="pwp_plugin_credit_sc"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
+	}
 } // end pwp_shortcode
 
 
@@ -403,8 +408,11 @@ class Pwp_Widget extends WP_Widget {
 	  	echo '</ul>';
 
 	//print_r($pwp_items); used for testing only
-
-    echo '<span id="pwp_plugin_credit_widget"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+	if($instance['credit'] == 'no') {
+		// Do nothing
+	} else {
+   	 echo '<span id="pwp_plugin_credit_widget"><a href="https://github.com/ciaranmahoney/Pocket-WP" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+   	}
 
 
 		echo $args['after_widget'];
@@ -416,16 +424,31 @@ class Pwp_Widget extends WP_Widget {
 	 * @param array $instance The widget options
 	 */
 	public function form( $instance ) {
-		if ( isset( $instance[ 'title' ] ) ) {
+		if ( isset( $instance[ 'title' ])) {
 			$title = $instance[ 'title' ];
 		}
 		else {
 			$title = __( 'New title', 'text_domain' );
 		}
 
-		$tags = $instance[ 'tags' ];
-		$count = $instance[ 'count' ];
-		
+		if(isset($instance[ 'tags' ])) {
+			$tags = $instance[ 'tags' ];
+		} else {
+			$tags = '';
+		}
+
+		if (isset($instance[ 'count' ])) {
+			$count = $instance[ 'count' ];
+		} else {
+			$count = '';
+		}
+
+		if (isset($instance[ 'credit' ])) {
+			$credit = $instance[ 'credit' ];
+		} else {
+			$credit = '';
+		}
+
 		?>
 		<p>
 		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
@@ -436,6 +459,14 @@ class Pwp_Widget extends WP_Widget {
 
 		<label for="<?php echo $this->get_field_id('count');?>"><?php _e('How many links do you want to show? (default is 5)'); ?> </label>
 		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'count' ); ?>" name="<?php echo $this->get_field_name( 'count' ); ?>" type="text" value="<?php echo esc_attr( $count ); ?>" placeholder="Enter number of links to show. Default is 5">
+
+		<label for="<?php echo $this->get_field_id('credit');?>"><?php _e('Give plugin author credit?'); ?> </label>
+
+		<label for="yes">Yes</label>
+		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'credit' ); ?>-yes" name="<?php echo $this->get_field_name( 'credit' ); ?>" type="radio" value="yes" <?php if($credit == 'yes') echo 'checked';?> >
+
+		<label for="no">No</label>
+		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'credit' ); ?>-no" name="<?php echo $this->get_field_name( 'credit' ); ?>" type="radio" value="no" <?php if($credit == 'no') echo 'checked';?> >
 		</p>
 		<?php 
 	}
@@ -451,6 +482,7 @@ class Pwp_Widget extends WP_Widget {
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
 		$instance['tags'] = ( ! empty( $new_instance['tags'] ) ) ? strip_tags( $new_instance['tags'] ) : '';
 		$instance['count'] = ( ! empty( $new_instance['count'] ) ) ? strip_tags( $new_instance['count'] ) : '';
+		$instance['credit'] = ( ! empty( $new_instance['credit'] ) ) ? strip_tags( $new_instance['credit'] ) : '';
 		return $instance;
 
 	}

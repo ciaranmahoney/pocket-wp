@@ -18,11 +18,12 @@ Due to the way Pocket's API works, you need to complete a few steps before you c
 
 The shortcode embeds a list of Pocket links into a page or post.
 
-The basic shortcode is `[pocket_links]` and it accepts three optional arguments:
+The basic shortcode is `[pocket_links]` and it accepts four optional arguments:
 ```
 count: [any number] // How many links to display. Default is all.
 excerpt: yes, no //Whether or not to display the excerpt extracted by Pocket. Default is yes.
 tags: [any of your Pocket tags] // Choose to show links from one tag. Currently supports one tag only. Default is any links, tagged or untagged.
+credit: yes, no // Chose to remove author credit. Default is yes (author credit will show).
 ```
 
 ## Widget
