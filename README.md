@@ -24,6 +24,7 @@ count: [any number] // How many links to display. Default is all.
 excerpt: yes, no //Whether or not to display the excerpt extracted by Pocket. Default is yes.
 tag: [any one of your Pocket tags] // Choose to show links from one tag. Supports one tag only. Default is all links, tagged or untagged.
 credit: yes, no // Choose to remove author credit. Default is yes (author credit will show).
+tag_list: yes, no // Whether or not to show a list of tags after each link.
 ```
 
 ## Widget

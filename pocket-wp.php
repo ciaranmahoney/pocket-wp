@@ -336,6 +336,7 @@ function pwp_shortcode ($atts, $content = null){
 							 'count' => '',
 							 'tag' => '',
 							 'excerpt' => '',
+							 'tag_list' => '',
 							 'credit' => ''
 							), $atts 
 			)
@@ -353,11 +354,14 @@ function pwp_shortcode ($atts, $content = null){
 	   		echo '<p class="pwp_item_excerpt">' . $item[2] . '</p>';
 	  	}
 
-	  	echo '<p class="pwp_tag_list">';
-	  	foreach($item[3] as $tag) {
-	  		echo '<span class="pwp_tags">' . $tag['tag'] . '</span>';
-	  	}
-	  	echo'</p>';
+	  	// Display tag list if tag_list not set to no.
+	  	if(strtolower($tag_list) != 'no') {
+	  	  	echo '<p class="pwp_tag_list">';
+		  	foreach($item[3] as $tag) {
+		  		echo '<span class="pwp_tags">' . $tag['tag'] . '</span>';
+		  	}
+		  	echo'</p>';
+		 }
   	}
 
 	//print_r($pwp_items); //used for testing only
@@ -366,7 +370,7 @@ function pwp_shortcode ($atts, $content = null){
     	// Show nothing
     } else { 
     	// Display author credit links
-    	echo '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
+    	echo '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=wp-plugins&utm_source=pocket-wp-shortcode&utm_medium=credit-link" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
 	}
 } // end pwp_shortcode
 
@@ -422,7 +426,7 @@ class Pwp_Widget extends WP_Widget {
 	if($instance['credit'] == 'no') {
 		// Do nothing
 	} else {
-   	 echo '<span id="pwp_plugin_credit_widget"><a href="http://ciaranmahoney.me/code/pocket-wp" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+   	 echo '<span id="pwp_plugin_credit_widget"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=wp-plugins&utm_source=pocket-wp-widget&utm_medium=credit-link" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
    	}
 
 
