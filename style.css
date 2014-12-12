@@ -7,13 +7,17 @@ span#pwp_plugin_credit_widget {
 	font-size: 0.7em;
 }
 
-span.pocket-tag {
-	background: #E0E0E0;
+p.pwp_item_excerpt {
+	margin-bottom: 5px;
+}
+
+span.pwp_tags {
+	background: #E7E7E7;
 	padding: 3px;
 	border-radius: 3px;
-	font-size: 9px;
+	font-size: 10px;
 	margin-right: 10px;
-	border: 1px solid #DADADA;
+	color: #515151;
 }
 
 p#pwp_plugin_credit_sc {
