@@ -101,8 +101,6 @@ function pwp_consumer_key_field_render(  ) {
 	$pwp_consumer_key = $pwp_options['pwp_consumer_key_field'];
 	?>
 	<input type='text' name='pwp_settings[pwp_consumer_key_field]' size="50" value='<?php echo $pwp_consumer_key; ?>'>
-	<p>Request: <?php echo get_option(' pwp_request_token'); ?> </p>
-	<p>Access: <?php print_r( get_option('pwp_access_token')); ?> </p>
 
 	<?php
 
