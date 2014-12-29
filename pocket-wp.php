@@ -132,7 +132,6 @@ class PocketWP {
 		echo __( 
 			'
 				<h2>Pocket WP</h2>
-				<p>Plugin by <a href="http://ciaranmahoney.me" target="_blank">Ciaran Mahoney</a></p>
 				<h3>Setup Instructions</h3>
 
 				<ol>
@@ -149,8 +148,10 @@ class PocketWP {
 					<p><strong>Widget</strong>: The Widget is available to drag and drop into any widgetized area. It has four options - title, count, tag and author credit.
 					</p>
 
-				<p>For more instructions, please visit the <a href="http://ciaranmahoney.me/code/pocket-wp"target="_blank">plugin site</a>. If you are having issues, please let me know on Twitter <a href="https://twitter.com/ciaransm">@ciaransm</a>
-				</p><br>
+				<p>For more instructions, please visit the <a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-options&utm_medium=wp-plugins"target="_blank">plugin site</a>. If you are having issues, please let me know on Twitter <a href="https://twitter.com/ciaransm">@ciaransm</a>.
+				</p>
+				<p>Plugin by <a href="http://ciaranmahoney.me/?utm_campaign=pocket-wp&utm_source=pwp-options&utm_medium=wp-plugins" target="_blank">Ciaran Mahoney</a></p>
+				<br>
 				<h3>Plugin Setup</h3>
 
 		   	', 'wordpress' );
@@ -412,11 +413,9 @@ class PocketWP {
 			 }
 	  	}
 
-		//print_r($pwp_items); //used for testing only
-
 	    if (strtolower($credit) == "yes") {
 	    	// Display author credit links
-	    	echo '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=wp-plugins&utm_source=pocket-wp-shortcode&utm_medium=credit-link" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
+	    	echo '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-shortcode&utm_medium=wp-plugins" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
 	    } else { 
 	    	// Do not show credit links unless user opts in.
 		}
@@ -476,7 +475,7 @@ class Pwp_Widget extends WP_Widget {
 
 	if($instance['credit'] == 'yes') {
 		// If user opts in to give plugin author credit, display credit links.
-		echo '<span id="pwp_plugin_credit_widget"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=wp-plugins&utm_source=pocket-wp-widget&utm_medium=credit-link" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+		echo '<span id="pwp_plugin_credit_widget"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-widget&utm_medium=wp-plugins" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
 	} else {
    	 	// Otherwise do nothing. Do not show credit is default setting.
    	}
