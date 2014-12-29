@@ -151,7 +151,6 @@ class PocketWP {
 				<p>For more instructions, please visit the <a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-options&utm_medium=wp-plugins"target="_blank">plugin site</a>. If you are having issues, please let me know on Twitter <a href="https://twitter.com/ciaransm">@ciaransm</a>.
 				</p>
 				<p>Plugin by <a href="http://ciaranmahoney.me/?utm_campaign=pocket-wp&utm_source=pwp-options&utm_medium=wp-plugins" target="_blank">Ciaran Mahoney</a></p>
-				<br>
 				<h3>Plugin Setup</h3>
 
 		   	', 'wordpress' );
