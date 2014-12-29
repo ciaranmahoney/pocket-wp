@@ -143,7 +143,15 @@ class PocketWP {
 					<li>After you have authorized your app with Pocket, you will be brought back to this page.</li>
 					<li>Click the grey <strong><em>GET ACCESS KEY</strong></em> button below to generate an access key. <strong>Please do this once only.</strong> You should get a popup to confirm your access key was authenticated successfully. If you get the authentication failed message, you just need to click <strong><em>Save Changes</strong></em> and then <strong><em>GET ACCESS KEY</strong></em> again. </li>
 				</ol>
-				<p>If you are having issues, please let me know on Twitter <a href="https://twitter.com/ciaransm">@ciaransm</a></p>
+				<h3>Plugin Usage</h3>
+					<p><strong>Shortcode</strong>: The basic shortcode is [pocket_links] and it accepts some optional arguments - count, excerpt, tag, credit, tag_list. <br>Example: [pocket_links count="5" tag="analytics" tag_list="yes" credit="no" excerpt="yes"]
+					</p>
+					<p><strong>Widget</strong>: The Widget is available to drag and drop into any widgetized area. It has four options - title, count, tag and author credit.
+					</p>
+
+				<p>For more instructions, please visit the <a href="http://ciaranmahoney.me/code/pocket-wp"target="_blank">plugin site</a>. If you are having issues, please let me know on Twitter <a href="https://twitter.com/ciaransm">@ciaransm</a>
+				</p><br>
+				<h3>Plugin Setup</h3>
 
 		   	', 'wordpress' );
 
