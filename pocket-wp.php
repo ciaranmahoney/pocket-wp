@@ -3,7 +3,7 @@
  * Plugin Name: Pocket WP
  * Plugin URI: http://ciaranmahoney.me/pocket-wp
  * Description: Adds a shortcode and widget which allows you to display your pocket links in a WordPress page/post.
- * Version: 0.2
+ * Version: 0.3
  * Author: Ciaran Mahoney
  * Author URI: http://ciaranmahoney.me/
  * License: GPL2
@@ -29,18 +29,15 @@ defined('ABSPATH') or die("No script kiddies please!");
 
 // Set the version of this plugin
 if( ! defined( 'POCKET_WP' ) ) {
-  define( 'POCKET_WP', '0.2' );
+  define( 'POCKET_WP', '0.3' );
 }
 
 class PocketWP {
 
 	public function __construct() 
 	{
-
-		// Display activation notice with setup information when plugin is activated
-		//register_activation_hook( __FILE__, array($this, 'pwp_activation_notice'));
-		// Display the admin notification
-
+		
+		// Display the admin notification on activation (based on plugin version stored in database)
  	   	add_action( 'admin_notices', array( $this, 'pwp_activation_notice' ));
 
 		// Initialize options page and add to menu
@@ -59,17 +56,32 @@ class PocketWP {
 		//Register css
 		add_action( 'wp_enqueue_scripts', array($this, 'pwp_add_stylesheet' ));
 
+		// Add link to settings page in plugins list
+		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array($this, 'pwp_plugin_action_links' ));
+
 	}
 
 	public function pwp_activation_notice() {
-		if( POCKET_WP != get_option('pocket_wp_version')){
+		if( POCKET_WP != get_option('pwp_version')){
 
-			add_option('pocket_wp_version', POCKET_WP);
+			add_option('pwp_version', POCKET_WP);
 		    $html = '<div class="updated">';
 		    $html .= '<p>';
-			$html .= 'Thank you for installing Pocket WP. To get setup you will need to create an application on the Pocket Developers site. To do so, please follow the instructions on the <strong><a href="options-general.php?page=pocket_wp">plugin options page</a></strong>.';
+			$html .= 'Thank you for installing Pocket WP. You will need to confiugre the plugin before it will work. <a href="options-general.php?page=pocket_wp" class="button button-primary">Configure Plugin</a></strong>';
 			$html .= '</p>';
-		    $html .= '</div><!-- /.updated -->';
+		    $html .= '</div>';
+		    echo $html;
+		}
+  	}
+
+  	public static function pwp_deactivation_notice() {
+		if( false == delete_option('pwp_version')){
+
+		    $html = '<div class="error">';
+		    $html .= '<p>';
+			$html .= 'Error deactivating Pocket WP. Please try again.';
+			$html .= '</p>';
+		    $html .= '</div>';
 		    echo $html;
 		}
   	}
@@ -78,6 +90,12 @@ class PocketWP {
 	public function pwp_add_stylesheet() {
 	    wp_register_style( 'pwp-style', plugins_url('style.css', __FILE__) );
 	    wp_enqueue_style( 'pwp-style' );
+	}
+
+	// Add link to the plugin settings page in plugin list
+	public function pwp_plugin_action_links( $links ) {
+	   $links[] = '<a href="'. get_admin_url(null, 'options-general.php?page=pocket_wp') .'">Settings</a>';
+	   return $links;
 	}
 
 	// Create an options page for Pocket WP consumer key
@@ -529,6 +547,10 @@ class Pwp_Widget extends WP_Widget {
 	}
 } // end widget class
 
+// Initialize classes
 $pocketwp = new PocketWP;
 $pocketWpWidget = new Pwp_Widget;
+
+// Delete pwp_version setting from database
+register_deactivation_hook( __FILE__, array( 'PocketWP', 'pwp_deactivation_notice' ));
 ?>
