@@ -28,9 +28,6 @@
 
 defined('ABSPATH') or die("No script kiddies please!");
 
-//include('/inc/auth.php');
-
-
 class PocketWP {
 
 	public function __construct() 
@@ -57,8 +54,6 @@ class PocketWP {
 
 	}
 
-	
-
 	// Setting an option to true once the plugin has been activated.
 	// This ensures the activation notice is only shown on activation
 	public function pwp_activation_notice_displayed(){
@@ -81,7 +76,7 @@ class PocketWP {
 
 	// Create an options page for Pocket WP consumer key
 	public function pwp_add_admin_menu(  ) { 
-		add_options_page( 'Pocket WP', 'Pocket WP', 'manage_options', 'pocket_wp', 'pwp_options_page' );
+		add_options_page( 'Pocket WP', 'Pocket WP', 'manage_options', 'pocket_wp', array($this,'pwp_options_page' ));
 	}
 
 	public function pwp_settings_exist(  ) { 
@@ -96,14 +91,14 @@ class PocketWP {
 		add_settings_section(
 			'pwp_pluginPage_section', 
 			__( '', 'wordpress' ), 
-			'pwp_settings_section_callback', 
+			array($this,'pwp_settings_section_callback'), 
 			'pwp_pluginPage'
 		);
 
 		add_settings_field( 
 			'pwp_consumer_key_field', 
 			__( 'Pocket Consumer Key', 'wordpress' ), 
-			'pwp_consumer_key_field_render', 
+			array($this,'pwp_consumer_key_field_render'), 
 			'pwp_pluginPage', 
 			'pwp_pluginPage_section' 
 		);
@@ -139,7 +134,7 @@ class PocketWP {
 		<?php
 
 		if( isset($_GET['settings-updated']) && $_GET['settings-updated'] == true ){
-	       pwp_get_request_token();
+	       $this->pwp_get_request_token();
 	   	}
 	}
 
@@ -158,7 +153,6 @@ class PocketWP {
 		
 		<div id="pwp_get_access_key_button"><p><a href="#"class="button-secondary">GET ACCESS KEY</a></p></div>
 		<?php
-
 
 	} //End options page setup
 
@@ -198,7 +192,7 @@ class PocketWP {
 
 		$pwp_options_url = site_url() . '/wp-admin/options-general.php?page=pocket_wp';
 
-		$oAuthRequestToken = explode('=', pwp_cURL(
+		$oAuthRequestToken = explode('=', $this->pwp_cURL(
 		   'https://getpocket.com/v3/oauth/request',
 		   array(
 		  	 'consumer_key' => $pwp_consumer_key,
@@ -223,7 +217,7 @@ class PocketWP {
 
 			$("#pwp_get_access_key_button").click(function(){ 
 				var data = {
-					'action': 'pwp_click_authorization_button'
+					'action': '$this->pwp_click_authorization_button'
 				};
 
 				// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
@@ -240,7 +234,7 @@ class PocketWP {
 			});
 
 			//Function to parse query string
-			public function getQueryVariable(variable){
+			function getQueryVariable(variable){
 		       var query = window.location.search.substring(1);
 		       var vars = query.split("&");
 		       for (var i=0;i<vars.length;i++) {
@@ -261,10 +255,7 @@ class PocketWP {
 			} else {
 				$('#pwp_get_access_key_button').before('<div class="pwp_notice">Please click the GET ACCESS KEY button once only. If you get a failed message, try clicking Save Changes above, then try again.</div>');
 			}
-		
-
-		});
-		</script> 
+		});</script> 
 
 		<?php
 	}
@@ -272,9 +263,9 @@ class PocketWP {
 	public function pwp_get_access_token(){
 		$pwp_options = get_option( 'pwp_settings' );
 		$pwp_consumer_key = $pwp_options['pwp_consumer_key_field'];
-		$pwp_request_token = get_option('pwp_request_token');
+		$pwp_request_token = $this->get_option('pwp_request_token');
 
-		$pwp_oAuthRequest = pwp_cURL('https://getpocket.com/v3/oauth/authorize', 
+		$pwp_oAuthRequest = $this->pwp_cURL('https://getpocket.com/v3/oauth/authorize', 
 				array(
 					'consumer_key' => $pwp_consumer_key,
 					'code' => $pwp_request_token
@@ -533,3 +524,4 @@ class Pwp_Widget extends WP_Widget {
 
 $pocketwp = new PocketWP;
 $pocketWpWidget = new Pwp_Widget;
+?>
