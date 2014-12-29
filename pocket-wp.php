@@ -29,7 +29,7 @@ defined('ABSPATH') or die("No script kiddies please!");
 
 // Set the version of this plugin
 if( ! defined( 'POCKET_WP' ) ) {
-  define( 'POCKET_WP', '0.3' );
+  define( 'POCKET_WP', '0.2' );
 }
 
 class PocketWP {
