@@ -217,7 +217,7 @@ class PocketWP {
 
 			$("#pwp_get_access_key_button").click(function(){ 
 				var data = {
-					'action': '$this->pwp_click_authorization_button'
+					'action': 'pwp_click_authorization_button'
 				};
 
 				// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
@@ -263,7 +263,7 @@ class PocketWP {
 	public function pwp_get_access_token(){
 		$pwp_options = get_option( 'pwp_settings' );
 		$pwp_consumer_key = $pwp_options['pwp_consumer_key_field'];
-		$pwp_request_token = $this->get_option('pwp_request_token');
+		$pwp_request_token = get_option('pwp_request_token');
 
 		$pwp_oAuthRequest = $this->pwp_cURL('https://getpocket.com/v3/oauth/authorize', 
 				array(
@@ -280,6 +280,7 @@ class PocketWP {
 
 		update_option( 'pwp_access_token', $pwp_access_token );
 		update_option( 'pwp_oauth_request', $pwp_oAuthRequest );
+
 	}
 
 	// Get Pocket links array
@@ -302,6 +303,8 @@ class PocketWP {
 
 		//Loop over cURL output
 		$pwp_links_output = array();
+		
+		//var_dump($pwp_pocket_request); //for testing
 
 	    foreach($pwp_pocket_request['list'] as $item){
 
