@@ -2,9 +2,9 @@
 
 /**
  * Plugin Name: Pocket WP
- * Plugin URI: TO DO
+ * Plugin URI: http://ciaranmahoney.me/
  * Description: Adds a shortcode which allows you to display your pocket links in a WordPress page/post.
- * Version: 0.1
+ * Version: 0.2
  * Author: Ciaran Mahoney
  * Author URI: http://ciaranmahoney.me/pocket-wp
  * License: GPL2
