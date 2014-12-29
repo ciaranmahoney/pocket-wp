@@ -1,12 +1,11 @@
 <?php
-
 /**
  * Plugin Name: Pocket WP
- * Plugin URI: http://ciaranmahoney.me/
- * Description: Adds a shortcode which allows you to display your pocket links in a WordPress page/post.
+ * Plugin URI: http://ciaranmahoney.me/pocket-wp
+ * Description: Adds a shortcode and widget which allows you to display your pocket links in a WordPress page/post.
  * Version: 0.2
- * Author: Ciaran Mahoney ~ <a href="https://twitter.com/ciaransm">@ciaransm</a> on Twitter
- * Author URI: http://ciaranmahoney.me/pocket-wp
+ * Author: Ciaran Mahoney
+ * Author URI: http://ciaranmahoney.me/
  * License: GPL2
  */
 
@@ -28,13 +27,21 @@
 
 defined('ABSPATH') or die("No script kiddies please!");
 
+// Set the version of this plugin
+if( ! defined( 'POCKET_WP' ) ) {
+  define( 'POCKET_WP', '0.3' );
+}
+
 class PocketWP {
 
 	public function __construct() 
 	{
 
 		// Display activation notice with setup information when plugin is activated
-		register_activation_hook( __FILE__,'pwp_activation_notice');
+		//register_activation_hook( __FILE__, array($this, 'pwp_activation_notice'));
+		// Display the admin notification
+
+ 	   	add_action( 'admin_notices', array( $this, 'pwp_activation_notice' ));
 
 		// Initialize options page and add to menu
 		add_action( 'admin_menu', array($this, 'pwp_add_admin_menu' ));
@@ -54,19 +61,18 @@ class PocketWP {
 
 	}
 
-	// Setting an option to true once the plugin has been activated.
-	// This ensures the activation notice is only shown on activation
-	public function pwp_activation_notice_displayed(){
-	    update_option('pwp_activation_notice_displayed','TRUE');
-	}
+	public function pwp_activation_notice() {
+		if( POCKET_WP != get_option('pocket_wp_version')){
 
-	public function pwp_activation_notice(){
-	    echo'
-	    	<div class="pwp-activation-notice"><p>Thank you for installing Pocket WP. To get setup you will need to create an application on the Pocket Developers site. To do so, please follow the instructions on the <a href="' . get_site_url() . '/wp-admin/options-general.php?page=pocket_wp">Pocket WP Options Page</a> and create your application. </p>
-	   		 </div>
-	   		'
-	   	;
-	}
+			add_option('pocket_wp_version', POCKET_WP);
+		    $html = '<div class="updated">';
+		    $html .= '<p>';
+			$html .= 'Thank you for installing Pocket WP. To get setup you will need to create an application on the Pocket Developers site. To do so, please follow the instructions on the <strong><a href="options-general.php?page=pocket_wp">plugin options page</a></strong>.';
+			$html .= '</p>';
+		    $html .= '</div><!-- /.updated -->';
+		    echo $html;
+		}
+  	}
 
 	// Register stylesheet
 	public function pwp_add_stylesheet() {
@@ -75,17 +81,17 @@ class PocketWP {
 	}
 
 	// Create an options page for Pocket WP consumer key
-	public function pwp_add_admin_menu(  ) { 
+	public function pwp_add_admin_menu() { 
 		add_options_page( 'Pocket WP', 'Pocket WP', 'manage_options', 'pocket_wp', array($this,'pwp_options_page' ));
 	}
 
-	public function pwp_settings_exist(  ) { 
+	public function pwp_settings_exist() { 
 		if( false == get_option( 'pocket_wp_settings' ) ) { 
-			add_option( 'pocket_wp_settings' );
+			update_option( 'pocket_wp_settings' );
 		}
 	}
 
-	public function pwp_settings_init(  ) { 
+	public function pwp_settings_init( ){ 
 		register_setting( 'pwp_pluginPage', 'pwp_settings' );
 
 		add_settings_section(
@@ -303,8 +309,6 @@ class PocketWP {
 
 		//Loop over cURL output
 		$pwp_links_output = array();
-		
-		//var_dump($pwp_pocket_request); //for testing
 
 	    foreach($pwp_pocket_request['list'] as $item){
 
@@ -384,11 +388,11 @@ class PocketWP {
 
 		//print_r($pwp_items); //used for testing only
 
-	    if (strtolower($credit) == "no") {
-	    	// Show nothing
-	    } else { 
+	    if (strtolower($credit) == "yes") {
 	    	// Display author credit links
 	    	echo '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=wp-plugins&utm_source=pocket-wp-shortcode&utm_medium=credit-link" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
+	    } else { 
+	    	// Do not show credit links unless user opts in.
 		}
 	} // end pwp_shortcode
 } // end pocketwp class
@@ -444,11 +448,11 @@ class Pwp_Widget extends WP_Widget {
 
 	  	echo '</ul>';
 
-	//print_r($pwp_items); used for testing only
-	if($instance['credit'] == 'no') {
-		// Do nothing
+	if($instance['credit'] == 'yes') {
+		// If user opts in to give plugin author credit, display credit links.
+		echo '<span id="pwp_plugin_credit_widget"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=wp-plugins&utm_source=pocket-wp-widget&utm_medium=credit-link" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
 	} else {
-   	 echo '<span id="pwp_plugin_credit_widget"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=wp-plugins&utm_source=pocket-wp-widget&utm_medium=credit-link" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+   	 	// Otherwise do nothing. Do not show credit is default setting.
    	}
 
 
