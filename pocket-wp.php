@@ -62,9 +62,9 @@ class PocketWP {
 	}
 
 	public function pwp_activation_notice() {
-		if( POCKET_WP != get_option('pwp_version')){
+		if( !get_option('pwp_activation_run')){
 
-			add_option('pwp_version', POCKET_WP);
+			add_option('pwp_activation_run', true);
 		    $html = '<div class="updated">';
 		    $html .= '<p>';
 			$html .= 'Thank you for installing Pocket WP. You will need to configure the plugin before it will work. <a href="options-general.php?page=pocket_wp" class="button button-primary">Configure Plugin</a></strong>';
@@ -74,17 +74,17 @@ class PocketWP {
 		}
   	}
 
-  	public static function pwp_deactivation_notice() {
-		if( false == delete_option('pwp_version')){
+  // 	public static function pwp_deactivation_notice() {
+		// if( false == delete_option('pwp_activation_run')){
 
-		    $html = '<div class="error">';
-		    $html .= '<p>';
-			$html .= 'Error deactivating Pocket WP. Please try again.';
-			$html .= '</p>';
-		    $html .= '</div>';
-		    echo $html;
-		}
-  	}
+		//     $html = '<div class="error">';
+		//     $html .= '<p>';
+		// 	$html .= 'Error deactivating Pocket WP. Please try again.';
+		// 	$html .= '</p>';
+		//     $html .= '</div>';
+		//     echo $html;
+		// }
+  // 	}
 
 	// Register stylesheet
 	public function pwp_add_stylesheet() {
@@ -562,6 +562,6 @@ class Pwp_Widget extends WP_Widget {
 $pocketwp = new PocketWP;
 $pocketWpWidget = new Pwp_Widget;
 
-// Delete pwp_version setting from database
-register_deactivation_hook( __FILE__, array( 'PocketWP', 'pwp_deactivation_notice' ));
+// // Delete pwp_version setting from database
+// register_deactivation_hook( __FILE__, array( 'PocketWP', 'pwp_deactivation_notice' ));
 ?>
