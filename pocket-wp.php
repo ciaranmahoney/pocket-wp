@@ -67,7 +67,7 @@ class PocketWP {
 			add_option('pwp_version', POCKET_WP);
 		    $html = '<div class="updated">';
 		    $html .= '<p>';
-			$html .= 'Thank you for installing Pocket WP. You will need to confiugre the plugin before it will work. <a href="options-general.php?page=pocket_wp" class="button button-primary">Configure Plugin</a></strong>';
+			$html .= 'Thank you for installing Pocket WP. You will need to configure the plugin before it will work. <a href="options-general.php?page=pocket_wp" class="button button-primary">Configure Plugin</a></strong>';
 			$html .= '</p>';
 		    $html .= '</div>';
 		    echo $html;
