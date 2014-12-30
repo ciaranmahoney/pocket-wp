@@ -395,29 +395,34 @@ class PocketWP {
 
 		// Loop through array and get link details.
 		foreach($pwp_items as $item){
-			echo '<h3><a href="' . $item[0] . '" class="pwp_item_sc_link" target="_blank">' . $item[1] . '</a></h3>';
+			$html[] = '<div class="pwp-links-shortcode">';
+
+			$html[] = '<h4><a href="' . $item[0] . '" class="pwp_item_sc_link" target="_blank">' . $item[1] . '</a></h4>';
 			
 			//Display excerpt if excerpt is not set to no.	
 		   	if (strtolower($excerpt) != 'no'){
-		   		echo '<p class="pwp_item_excerpt">' . $item[2] . '</p>';
+		   		$html[] = '<p class="pwp_item_excerpt">' . $item[2] . '</p>';
 		  	}
 
 		  	// Display tag list if tag_list not set to no.
 		  	if(strtolower($tag_list) != 'no') {
-		  	  	echo '<p class="pwp_tag_list">';
+		  	  	$html[] = '<p class="pwp_tag_list">';
 			  	foreach($item[3] as $tag) {
-			  		echo '<span class="pwp_tags">' . $tag['tag'] . '</span>';
+			  		$html[] = '<span class="pwp_tags">' . $tag['tag'] . '</span>';
 			  	}
-			  	echo'</p>';
+			  	$html[] ='</p>';
 			 }
 	  	}
 
 	    if (strtolower($credit) == "yes") {
 	    	// Display author credit links
-	    	echo '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-shortcode&utm_medium=wp-plugins" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
+	    	$html[] = '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-shortcode&utm_medium=wp-plugins" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
 	    } else { 
 	    	// Do not show credit links unless user opts in.
 		}
+
+		return implode("\n", $html);
+
 	} // end pwp_shortcode
 } // end pocketwp class
 
