@@ -3,7 +3,7 @@
  * Plugin Name: Pocket WP
  * Plugin URI: http://ciaranmahoney.me/pocket-wp
  * Description: Adds a shortcode and widget which allows you to display your pocket links in a WordPress page/post.
- * Version: 0.3
+ * Version: 0.4
  * Author: Ciaran Mahoney
  * Author URI: http://ciaranmahoney.me/
  * License: GPL2
@@ -29,7 +29,7 @@ defined('ABSPATH') or die("No script kiddies please!");
 
 // Set the version of this plugin
 if( ! defined( 'POCKET_WP' ) ) {
-  define( 'POCKET_WP', '0.3' );
+  define( 'POCKET_WP', '0.4' );
 }
 
 class PocketWP {
