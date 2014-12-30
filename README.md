@@ -40,25 +40,25 @@ The shortcode embeds a list of Pocket links into a page or post.
 
 The basic shortcode is `[pocket_links]` and it accepts some optional arguments:
 
-    count: [any number] // How many links to display. Default is all.`</pre>
+`count: [any number] // How many links to display. Default is all.`
 
-    <pre>`excerpt: yes, no // Whether or not to display the excerpt extracted by Pocket. Default is yes.`</pre>
+`excerpt: yes, no // Whether or not to display the excerpt extracted by Pocket. Default is yes.`
 
-    <pre>`tag: [any one of your Pocket tags] // Choose to show links from one tag. Supports one tag only. Default is all links, tagged or untagged.`</pre>
+`tag: [any one of your Pocket tags] // Choose to show links from one tag. Supports one tag only. Default is all links, tagged or untagged.`
 
-    <pre>`credit: yes, no // Choose to add author credit. Default is to not show credit links.`</pre>
+`credit: yes, no // Choose to add author credit. Default is to not show credit links.
 
-    tag_list: yes, no // Whether or not to show a list of tags after each link.`
+`tag_list: yes, no // Whether or not to show a list of tags after each link.`
 
-    #### Widget
+#### Widget
 
-    The Widget is available to drag and drop into any widgetized sidebars. It has some options:
+The Widget is available to drag and drop into any widgetized sidebars. It has some options:
 
-    <pre>`title // the title for the widget`</pre>
+`title // the title for the widget`
 
-    <pre>`count // the number of links to show. Default is 5`</pre>
+`count // the number of links to show. Default is 5`
 
-    <pre>`tag: [any of your Pocket tags] // Choose to show links from one tag. Currently supports one tag only. Default is all links, tagged or untagged.
+`tag: [any of your Pocket tags] // Choose to show links from one tag. Currently supports one tag only. Default is all links, tagged or untagged.`
 
 `author credit: yes, no // Choose to give author credit. Default is to not show credit links.
 
