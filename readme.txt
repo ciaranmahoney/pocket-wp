@@ -61,7 +61,7 @@ The Widget is available to drag and drop into any widgetized sidebars. It has so
 Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-readme&utm_medium=wp-plugins) for more information.
 
 == Screenshots ==
-
+Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-readme&utm_medium=wp-plugins) for more information.
 
 == Changelog ==
 
