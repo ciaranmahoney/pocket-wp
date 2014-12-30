@@ -70,6 +70,9 @@ Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=
 
 == Changelog ==
 
+= 0.4 =
+* Fix so shortcode doesn't always display above text.
+
 = 0.3 =
 * First public release
 * Made author credit opt-in (was opt-out)
@@ -87,5 +90,3 @@ Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=
 
 
 == Upgrade Notice ==
-
-
