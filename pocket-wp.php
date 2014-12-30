@@ -1,19 +1,11 @@
 <?php
 /**
  * Plugin Name: Pocket WP
-<<<<<<< HEAD
  * Plugin URI: http://ciaranmahoney.me/pocket-wp
  * Description: Adds a shortcode and widget which allows you to display your pocket links in a WordPress page/post.
  * Version: 0.3
  * Author: Ciaran Mahoney
  * Author URI: http://ciaranmahoney.me/
-=======
- * Plugin URI: http://ciaranmahoney.me/pocket-wp
- * Description: Adds a shortcode and widget which allows you to display your pocket links in a WordPress page/post.
- * Version: 0.3
- * Author: Ciaran Mahoney
- * Author URI: http://ciaranmahoney.me/
->>>>>>> add-classes
  * License: GPL2
  */
 
