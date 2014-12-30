@@ -35,7 +35,7 @@ The basic shortcode is `[pocket_links]` and it accepts some optional arguments:
 
 `tag: [any one of your Pocket tags] // Choose to show links from one tag. Supports one tag only. Default is all links, tagged or untagged.`
 
-`credit: yes, no // Choose to add author credit. Default is to not show credit links.
+`credit: yes, no // Choose to add author credit. Default is to not show credit links.`
 
 `tag_list: yes, no // Whether or not to show a list of tags after each link.`
 
@@ -49,7 +49,7 @@ The Widget is available to drag and drop into any widgetized sidebars. It has so
 
 `tag: [any of your Pocket tags] // Choose to show links from one tag. Currently supports one tag only. Default is all links, tagged or untagged.`
 
-`author credit: yes, no // Choose to give author credit. Default is to not show credit links.
+`author credit: yes, no // Choose to give author credit. Default is to not show credit links.`
 
 
 == Installation ==
@@ -61,7 +61,12 @@ The Widget is available to drag and drop into any widgetized sidebars. It has so
 Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-readme&utm_medium=wp-plugins) for more information.
 
 == Screenshots ==
-Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-readme&utm_medium=wp-plugins) for more information.
+
+1. Pocket WordPress settings page. 
+2. Screenshot of the shortcode as it displays in a page.
+3. Screenshot of the shortcode in the editor.
+4. Screenshot of the widget settings box.
+5. Screenshot of the widget as it displays in a sidebar.
 
 == Changelog ==
 
