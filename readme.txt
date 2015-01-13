@@ -70,6 +70,9 @@ Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=
 
 == Changelog ==
 
+= 0.4.1 =
+* Adding error checking on pocket feed retrieval.
+
 = 0.4 =
 * Fix so shortcode doesn't always display above text.
 * Fixing activation message to only show once on first install.

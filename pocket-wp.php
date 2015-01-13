@@ -3,7 +3,7 @@
  * Plugin Name: Pocket WP
  * Plugin URI: http://ciaranmahoney.me/pocket-wp
  * Description: Adds a shortcode and widget which allows you to display your pocket links in a WordPress page/post.
- * Version: 0.4
+ * Version: 0.4.1
  * Author: Ciaran Mahoney
  * Author URI: http://ciaranmahoney.me/
  * License: GPL2
@@ -25,11 +25,14 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+
 defined('ABSPATH') or die("No script kiddies please!");
 
 // Set the version of this plugin
 if( ! defined( 'POCKET_WP' ) ) {
-  define( 'POCKET_WP', '0.4' );
+  define( 'POCKET_WP', '0.4.1' );
 }
 
 class PocketWP {
@@ -336,47 +339,49 @@ class PocketWP {
 		//Loop over cURL output
 		$pwp_links_output = array();
 
-	    foreach($pwp_pocket_request['list'] as $item){
+	    if(is_array($pwp_pocket_request)){
+		    foreach($pwp_pocket_request['list'] as $item){
 
-	    	// Check if given url is set. If not, use resolved url.
-	    	if ($item['given_url'] != ""){
-	    		$pwp_url = $item['given_url'];
+		    	// Check if given url is set. If not, use resolved url.
+		    	if ($item['given_url'] != ""){
+		    		$pwp_url = $item['given_url'];
 
-	    	} else{
-	    		$pwp_url = $item['resolved_url'];
-			}
+		    	} else{
+		    		$pwp_url = $item['resolved_url'];
+				}
 
-	    	//Check if a title is set. If not just use url
-	    	if ($item['resolved_title'] != ""){
-	    		$pwp_title = $item['resolved_title'];
+		    	//Check if a title is set. If not just use url
+		    	if ($item['resolved_title'] != ""){
+		    		$pwp_title = $item['resolved_title'];
 
-	    	} elseif ($pwp_title = $item['given_title'] != ""){
-	    		$pwp_title = $item['given_title'];
+		    	} elseif ($pwp_title = $item['given_title'] != ""){
+		    		$pwp_title = $item['given_title'];
 
-	    	} else {
-	    		$pwp_title = $item['given_url'];
-	    	}
+		    	} else {
+		    		$pwp_title = $item['given_url'];
+		    	}
 
-	    	// Check for excerpt
-	    	if ($item['excerpt'] != ''){
-	    		$pwp_excerpt = $item['excerpt'];
-	    	} else {
-	    		$pwp_excerpt = "Sorry, Pocket didn't save an excerpt for this link.";
-	    	}
+		    	// Check for excerpt
+		    	if ($item['excerpt'] != ''){
+		    		$pwp_excerpt = $item['excerpt'];
+		    	} else {
+		    		$pwp_excerpt = "Sorry, Pocket didn't save an excerpt for this link.";
+		    	}
 
-	    	// Check for tags
-	    	if ($item['tags'] != ''){
-	    		$pwp_tags = $item['tags'];
-			} else {
-				$pwp_tags = '';
-			}
+		    	// Check for tags
+		    	if ($item['tags'] != ''){
+		    		$pwp_tags = $item['tags'];
+				} else {
+					$pwp_tags = '';
+				}
 
-	    	array_push($pwp_links_output, 
-	    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags
-	    		)
-	    	);
-	    }
-		return $pwp_links_output;
+		    	array_push($pwp_links_output, 
+		    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags
+		    		)
+		    	);
+		    }
+			return $pwp_links_output;
+		} 
 	}
 
 	public function pwp_shortcode ($atts, $content = null){
@@ -394,34 +399,41 @@ class PocketWP {
 		$pwp_items = $this->pwp_get_links($count, $tag);
 
 		// Loop through array and get link details.
-		foreach($pwp_items as $item){
-			$html[] = '<div class="pwp-links-shortcode">';
+		if(is_array($pwp_items)){
+			foreach($pwp_items as $item){
+				$html[] = '<div class="pwp-links-shortcode">';
 
-			$html[] = '<h4><a href="' . $item[0] . '" class="pwp_item_sc_link" target="_blank">' . $item[1] . '</a></h4>';
-			
-			//Display excerpt if excerpt is not set to no.	
-		   	if (strtolower($excerpt) != 'no'){
-		   		$html[] = '<p class="pwp_item_excerpt">' . $item[2] . '</p>';
-		  	}
-
-		  	// Display tag list if tag_list not set to no.
-		  	if(strtolower($tag_list) != 'no') {
-		  	  	$html[] = '<p class="pwp_tag_list">';
-			  	foreach($item[3] as $tag) {
-			  		$html[] = '<span class="pwp_tags">' . $tag['tag'] . '</span>';
+				$html[] = '<h4><a href="' . $item[0] . '" class="pwp_item_sc_link" target="_blank">' . $item[1] . '</a></h4>';
+				
+				//Display excerpt if excerpt is not set to no.	
+			   	if (strtolower($excerpt) != 'no'){
+			   		$html[] = '<p class="pwp_item_excerpt">' . $item[2] . '</p>';
 			  	}
-			  	$html[] ='</p>';
-			 }
-	  	}
 
-	    if (strtolower($credit) == "yes") {
-	    	// Display author credit links
-	    	$html[] = '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-shortcode&utm_medium=wp-plugins" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
-	    } else { 
-	    	// Do not show credit links unless user opts in.
+			  	// Display tag list if tag_list not set to no.
+			  	if(strtolower($tag_list) != 'no') {
+			  	  	$html[] = '<p class="pwp_tag_list">';
+				  	foreach($item[3] as $tag) {
+				  		$html[] = '<span class="pwp_tags">' . $tag['tag'] . '</span>';
+				  	}
+				  	$html[] ='</p>';
+				}
+		  	}
+		
+		    if (strtolower($credit) == "yes") {
+		    	// Display author credit links
+		    	$html[] = '<p id="pwp_plugin_credit_sc"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-shortcode&utm_medium=wp-plugins" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></p>';
+		    } else { 
+		    	// Do not show credit links unless user opts in.
+			}
+
+			return implode("\n", $html);
+
+		} else {
+			$html[] = '<div class="pwp-links-shortcode">';
+			$html[] = 'Cannot retrieve feed from Pocket. Please ensure you have completed setup on the Pocket WP settings page in the WordPress backend (Settings > PocketWP)</div>';
+			return implode("\n", $html);
 		}
-
-		return implode("\n", $html);
 
 	} // end pwp_shortcode
 } // end pocketwp class
@@ -470,19 +482,24 @@ class Pwp_Widget extends WP_Widget {
 		$pwp_items = $PocketWP->pwp_get_links($pwp_count, $instance['tag']);
 
 		// Loop through array and get link details.
-		echo '<ul class="pwp_widget_list">';
-		foreach($pwp_items as $item){
-			echo '<li><a href="' . $item[0] . '" class="pwp_item_widget_link" target="_blank">' . $item[1] . '</a>';
-	  	}
+		if(is_array($pwp_items)){
 
-	  	echo '</ul>';
+			echo '<ul class="pwp_widget_list">';
+			foreach($pwp_items as $item){
+				echo '<li><a href="' . $item[0] . '" class="pwp_item_widget_link" target="_blank">' . $item[1] . '</a>';
+		  	}
 
-	if($instance['credit'] == 'yes') {
-		// If user opts in to give plugin author credit, display credit links.
-		echo '<span id="pwp_plugin_credit_widget"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-widget&utm_medium=wp-plugins" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
-	} else {
-   	 	// Otherwise do nothing. Do not show credit is default setting.
-   	}
+		  	echo '</ul>';
+
+			if($instance['credit'] == 'yes') {
+				// If user opts in to give plugin author credit, display credit links.
+				echo '<span id="pwp_plugin_credit_widget"><a href="http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=pocket-wp&utm_source=pwp-widget&utm_medium=wp-plugins" target="_blank">Pocket WP</a> by <a href="https://twitter.com/ciaransm" target="_blank">@ciaransm</a></span>';
+			} else {
+		   	 	// Otherwise do nothing. Do not show credit is default setting.
+		   	}
+		} else {
+			echo 'Cannot retrieve feed from Pocket. Please ensure you have completed setup on the Pocket WP settings page in the WordPress backend (Settings > PocketWP)';
+		}
 
 
 		echo $args['after_widget'];
