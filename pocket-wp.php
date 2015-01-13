@@ -24,10 +24,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-ini_set('display_errors', 'On');
-error_reporting(E_ALL);
-
 defined('ABSPATH') or die("No script kiddies please!");
 
 // Set the version of this plugin
