@@ -3,7 +3,7 @@
  * Plugin Name: Pocket WP
  * Plugin URI: http://ciaranmahoney.me/pocket-wp
  * Description: Adds a shortcode and widget which allows you to display your pocket links in a WordPress page/post.
- * Version: 0.4.1
+ * Version: 0.4.2
  * Author: Ciaran Mahoney
  * Author URI: http://ciaranmahoney.me/
  * License: GPL2
@@ -28,7 +28,7 @@ defined('ABSPATH') or die("No script kiddies please!");
 
 // Set the version of this plugin
 if( ! defined( 'POCKET_WP' ) ) {
-  define( 'POCKET_WP', '0.4.1' );
+  define( 'POCKET_WP', '0.4.2' );
 }
 
 class PocketWP {
@@ -365,15 +365,14 @@ class PocketWP {
 		    	}
 
 		    	// Check for tags
-		    	if ($item['tags'] != ''){
+		    	if (isset($item['tags'] )){
 		    		$pwp_tags = $item['tags'];
 				} else {
 					$pwp_tags = '';
 				}
 
 		    	array_push($pwp_links_output, 
-		    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags
-		    		)
+		    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags)
 		    	);
 		    }
 			return $pwp_links_output;
@@ -408,12 +407,19 @@ class PocketWP {
 
 			  	// Display tag list if tag_list not set to no.
 			  	if(strtolower($tag_list) != 'no') {
-			  	  	$html[] = '<p class="pwp_tag_list">';
-				  	foreach($item[3] as $tag) {
-				  		$html[] = '<span class="pwp_tags">' . $tag['tag'] . '</span>';
-				  	}
-				  	$html[] ='</p>';
-				}
+			  		if($item[3] != ""){
+				  	  	$html[] = '<p class="pwp_tag_list">';
+					  	foreach($item[3] as $tag) {
+					  		$html[] = '<span class="pwp_tags">' . $tag['tag'] . '</span>';
+					  	}
+					  	$html[] ='</p>';
+
+					} else {
+						$html[] = '<p class="pwp_tag_list"><span class="pwp_tags">untagged</span></p>';
+					}
+		  		} else {
+		  			$html[] ='<p class="pwp_tag_list"></p>';
+		  		}
 		  	}
 		
 		    if (strtolower($credit) == "yes") {

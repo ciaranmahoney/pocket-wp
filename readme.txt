@@ -70,6 +70,9 @@ Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=
 
 == Changelog ==
 
+= 0.4.2 =
+* Improved the way plugin handles untagged posts. It now shows "untagged" in the tag list instead of throwing an error. Tag list can be turned off by using tag_list="no"
+
 = 0.4.1 =
 * Adding error checking on pocket feed retrieval.
 
