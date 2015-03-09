@@ -70,6 +70,9 @@ Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=
 
 == Changelog ==
 
+= 0.4.3 = 
+* Fixing an issue with link generator not having closing div. (Thanks to Myles Gray for catching this.)
+
 = 0.4.2 =
 * Improved the way plugin handles untagged posts. It now shows "untagged" in the tag list instead of throwing an error. Tag list can be turned off by using tag_list="no"
 
