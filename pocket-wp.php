@@ -420,6 +420,7 @@ class PocketWP {
 		  		} else {
 		  			$html[] ='<p class="pwp_tag_list"></p>';
 		  		}
+		  		$html[] = '</div>';
 		  	}
 		
 		    if (strtolower($credit) == "yes") {
