@@ -386,13 +386,13 @@ class PocketWP {
 								 'excerpt' => '',
 								 'tag_list' => '',
 								 'credit' => '',
-								 'status' => ''
+								 'state' => ''
 								), $atts 
 				)
 		);
 
 		//Get the array that was extracted from the cURL request
-		$pwp_items = $this->pwp_get_links($count, $tag, $status);
+		$pwp_items = $this->pwp_get_links($count, $tag, $state);
 
 		// Loop through array and get link details.
 		if(is_array($pwp_items)){
@@ -482,8 +482,15 @@ class Pwp_Widget extends WP_Widget {
 			$pwp_count = '5';
 		}
 
+		if(! empty( $instance['state'] ) ){
+			$pwp_state = $instance['state'];
+
+		} else {
+			$pwp_state = 'all';
+		}
+
 		$PocketWP = new PocketWP();
-		$pwp_items = $PocketWP->pwp_get_links($pwp_count, $instance['tag']);
+		$pwp_items = $PocketWP->pwp_get_links($pwp_count, $instance['tag'], $pwp_state);
 
 		// Loop through array and get link details.
 		if(is_array($pwp_items)){
@@ -540,24 +547,52 @@ class Pwp_Widget extends WP_Widget {
 			$credit = '';
 		}
 
+		if (isset($instance[ 'state' ])) {
+			$state = $instance[ 'state' ];
+		} else {
+			$state = 'all';
+		}
+
+
+
 		?>
 		<p>
-		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
-		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
+			<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+		</p>
 
-		<label for="<?php echo $this->get_field_id('tag');?>"><?php _e('tag:'); ?> </label>
-		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'tag' ); ?>" name="<?php echo $this->get_field_name( 'tag' ); ?>" type="text" value="<?php echo esc_attr( $tag ); ?>" placeholder="enter tag">
+		<p>
+			<label for="<?php echo $this->get_field_id('tag');?>"><?php _e('tag:'); ?> </label>
+			<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'tag' ); ?>" name="<?php echo $this->get_field_name( 'tag' ); ?>" type="text" value="<?php echo esc_attr( $tag ); ?>" placeholder="enter tag">
+		</p>
 
-		<label for="<?php echo $this->get_field_id('count');?>"><?php _e('How many links do you want to show? (default is 5)'); ?> </label>
-		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'count' ); ?>" name="<?php echo $this->get_field_name( 'count' ); ?>" type="text" value="<?php echo esc_attr( $count ); ?>" placeholder="Enter number of links to show. Default is 5">
+		<p>
 
-		<label for="<?php echo $this->get_field_id('credit');?>"><?php _e('Give plugin author credit?'); ?> </label>
+			<label for="<?php echo $this->get_field_id('count');?>"><?php _e('How many links do you want to show? (default is 5)'); ?> </label>
+			<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'count' ); ?>" name="<?php echo $this->get_field_name( 'count' ); ?>" type="text" value="<?php echo esc_attr( $count ); ?>" placeholder="Enter number of links to show. Default is 5">
+		</p>
 
-		<label for="yes">Yes</label>
-		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'credit' ); ?>-yes" name="<?php echo $this->get_field_name( 'credit' ); ?>" type="radio" value="yes" <?php if($credit == 'yes') echo 'checked';?> >
+		<p>
+			<label for="<?php echo $this->get_field_id('credit');?>"><?php _e('Give plugin author credit?'); ?> </label><br>
 
-		<label for="no">No</label>
-		<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'credit' ); ?>-no" name="<?php echo $this->get_field_name( 'credit' ); ?>" type="radio" value="no" <?php if($credit == 'no') echo 'checked';?> >
+			<label for="yes">Yes</label>
+			<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'credit' ); ?>-yes" name="<?php echo $this->get_field_name( 'credit' ); ?>" type="radio" value="yes" <?php if($credit == 'yes') echo 'checked';?> >
+
+			<label for="no">No</label>
+			<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'credit' ); ?>-no" name="<?php echo $this->get_field_name( 'credit' ); ?>" type="radio" value="no" <?php if($credit == 'no') echo 'checked';?> > <br>
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('state');?>"><?php _e('What state are the links you want to display?'); ?> </label><br>
+
+			<label for="all">All</label>
+			<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'state' ); ?>-all" name="<?php echo $this->get_field_name( 'state' ); ?>" type="radio" value="all" <?php if($state == 'all') echo 'checked';?> >
+
+			<label for="unread">Unread</label>
+			<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'state' ); ?>-unread" name="<?php echo $this->get_field_name( 'state' ); ?>" type="radio" value="unread" <?php if($state == 'unread') echo 'checked';?> >
+
+			<label for="archive">Archived</label>
+			<input class="widefat pwp_widget_field" id="<?php echo $this->get_field_id( 'state' ); ?>-archive" name="<?php echo $this->get_field_name( 'state' ); ?>" type="radio" value="archive" <?php if($state == 'archive') echo 'checked';?> >
 		</p>
 		<?php 
 	}
@@ -569,6 +604,7 @@ class Pwp_Widget extends WP_Widget {
 		$instance['tag'] = ( ! empty( $new_instance['tag'] ) ) ? strip_tags( $new_instance['tag'] ) : '';
 		$instance['count'] = ( ! empty( $new_instance['count'] ) ) ? strip_tags( $new_instance['count'] ) : '';
 		$instance['credit'] = ( ! empty( $new_instance['credit'] ) ) ? strip_tags( $new_instance['credit'] ) : '';
+		$instance['state'] = ( ! empty( $new_instance['state'] ) ) ? strip_tags( $new_instance['state'] ) : '';
 		return $instance;
 
 	}
