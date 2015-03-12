@@ -315,7 +315,7 @@ class PocketWP {
 	}
 
 	// Get Pocket links array
-	public function pwp_get_links($pwp_count, $pwp_tag) {
+	public function pwp_get_links($pwp_count, $pwp_tag, $pwp_state) {
 		$pwp_options = get_option( 'pwp_settings' );
 		$pwp_consumer_key = $pwp_options['pwp_consumer_key_field'];
 		$pwp_access_token = get_option('pwp_access_token');
@@ -326,7 +326,7 @@ class PocketWP {
 				'access_token' 	=> $pwp_access_token,
 				'tag'			=> $pwp_tag,
 				'detailType'	=> 'complete',
-				'state'			=> 'all',
+				'state'			=> strtolower($pwp_state),
 				'count'			=> $pwp_count
 				),
 			false
@@ -385,13 +385,14 @@ class PocketWP {
 								 'tag' => '',
 								 'excerpt' => '',
 								 'tag_list' => '',
-								 'credit' => ''
+								 'credit' => '',
+								 'status' => ''
 								), $atts 
 				)
 		);
 
 		//Get the array that was extracted from the cURL request
-		$pwp_items = $this->pwp_get_links($count, $tag);
+		$pwp_items = $this->pwp_get_links($count, $tag, $status);
 
 		// Loop through array and get link details.
 		if(is_array($pwp_items)){
