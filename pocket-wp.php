@@ -371,8 +371,17 @@ class PocketWP {
 					$pwp_tags = '';
 				}
 
+				// Check for image
+		    	if ($item['has_image'] == '1'){
+		    		if(isset($item['images'][1]['src'])){
+		    			$pwp_image = $item['images'][1]['src'];
+		    		} else $pwp_image = '';
+				} else {
+					$pwp_image = '';
+				}
+
 		    	array_push($pwp_links_output, 
-		    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags)
+		    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags, $pwp_image)
 		    	);
 		    }
 			return $pwp_links_output;
@@ -386,6 +395,7 @@ class PocketWP {
 								 'excerpt' => '',
 								 'tag_list' => '',
 								 'credit' => '',
+								 'image' => '',
 								 'state' => ''
 								), $atts 
 				)
@@ -397,7 +407,21 @@ class PocketWP {
 		// Loop through array and get link details.
 		if(is_array($pwp_items)){
 			foreach($pwp_items as $item){
-				$html[] = '<div class="pwp-links-shortcode">';
+
+				// Include featured image, if option selected
+				if (strtolower($image) == 'yes'){
+					if ($item[4] != ''){
+						$html[] = '<div class="pwp-featured-image-wrapper"><p class="pwp-featured-image-placeholder" style="background-image: url(' . $item[4] . '); background-size: cover; background-position: 50% 50%, 50% 50%;"></p></div>
+						<div class="pwp-links-shortcode-image">';
+					} else {
+						$html[] = '<div class="pwp-featured-image-wrapper"><p class="pwp-featured-image-placeholder"></p></div>
+						<div class="pwp-links-shortcode-image">';
+					}
+				}
+
+				else{
+					$html[] = '<div class="pwp-links-shortcode">';
+				}
 
 				$html[] = '<h4><a href="' . $item[0] . '" class="pwp_item_sc_link" target="_blank">' . $item[1] . '</a></h4>';
 				
@@ -421,7 +445,7 @@ class PocketWP {
 		  		} else {
 		  			$html[] ='<p class="pwp_tag_list"></p>';
 		  		}
-		  		$html[] = '</div>';
+		  		$html[] = '</div><div class="pwp-clear"></div>';
 		  	}
 		
 		    if (strtolower($credit) == "yes") {
