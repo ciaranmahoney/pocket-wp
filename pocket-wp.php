@@ -3,7 +3,7 @@
  * Plugin Name: Pocket WP
  * Plugin URI: http://ciaranmahoney.me/pocket-wp
  * Description: Adds a shortcode and widget which allows you to display your pocket links in a WordPress page/post.
- * Version: 0.4.3
+ * Version: 0.5.0
  * Author: Ciaran Mahoney
  * Author URI: http://ciaranmahoney.me/
  * License: GPL2
@@ -28,7 +28,7 @@ defined('ABSPATH') or die("No script kiddies please!");
 
 // Set the version of this plugin
 if( ! defined( 'POCKET_WP' ) ) {
-  define( 'POCKET_WP', '0.4.3' );
+  define( 'POCKET_WP', '0.5.0' );
 }
 
 class PocketWP {
@@ -72,18 +72,6 @@ class PocketWP {
 		    echo $html;
 		}
   	}
-
-  // 	public static function pwp_deactivation_notice() {
-		// if( false == delete_option('pwp_activation_run')){
-
-		//     $html = '<div class="error">';
-		//     $html .= '<p>';
-		// 	$html .= 'Error deactivating Pocket WP. Please try again.';
-		// 	$html .= '</p>';
-		//     $html .= '</div>';
-		//     echo $html;
-		// }
-  // 	}
 
 	// Register stylesheet
 	public function pwp_add_stylesheet() {
@@ -234,7 +222,7 @@ class PocketWP {
 
 		update_option( 'pwp_request_token', $oAuthRequestToken[1] );
 
-		// (3) Redirect user to Pocket to continue authorization
+		// Redirect user to Pocket to continue authorization
 		 echo '<meta http-equiv="refresh" content="0;url=https://getpocket.com/auth/authorize?request_token=' . urlencode($oAuthRequestToken[1]) . '&redirect_uri=' . urlencode(site_url()) . urlencode("/wp-admin/options-general.php?page=pocket_wp&pwpsuccess=true/");
 
 	} // End contact Pocket to get access token
@@ -251,7 +239,6 @@ class PocketWP {
 					'action': 'pwp_click_authorization_button'
 				};
 
-				// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 				$.post(ajaxurl, data, function(response) {
 
 					if (response == 0) {
@@ -371,7 +358,7 @@ class PocketWP {
 					$pwp_tags = '';
 				}
 
-				// Check for image
+				// Check if Pocket saved an image
 		    	if ($item['has_image'] == '1'){
 		    		if(isset($item['images'][1]['src'])){
 		    			$pwp_image = $item['images'][1]['src'];
@@ -576,8 +563,6 @@ class Pwp_Widget extends WP_Widget {
 		} else {
 			$state = 'all';
 		}
-
-
 
 		?>
 		<p>

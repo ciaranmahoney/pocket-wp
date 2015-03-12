@@ -39,17 +39,23 @@ The basic shortcode is `[pocket_links]` and it accepts some optional arguments:
 
 `tag_list: yes, no // Whether or not to show a list of tags after each link.`
 
+`image: yes, no // Whether or not to show a thumbnail image next to the link, if available. Note, if the image is blocked, the image will appear as a broken image`
+
+`state: all, archive, unread // Choose the type of links to show. You can show only archived or unread links if you want.`
+
 = Widget =
 
 The Widget is available to drag and drop into any widgetized sidebars. It has some options:
 
-`title // the title for the widget`
+`title: // the title for the widget`
 
-`count // the number of links to show. Default is 5`
+`count: // the number of links to show. Default is 5`
 
 `tag: [any of your Pocket tags] // Choose to show links from one tag. Currently supports one tag only. Default is all links, tagged or untagged.`
 
 `author credit: yes, no // Choose to give author credit. Default is to not show credit links.`
+
+`state: all, archive, unread // Choose the type of links to show. You can show only archived or unread links if you want.`
 
 
 == Installation ==
@@ -67,8 +73,14 @@ Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=
 3. Screenshot of the shortcode in the editor.
 4. Screenshot of the widget settings box.
 5. Screenshot of the widget as it displays in a sidebar.
+6. Screenshot of link list with thumbnail images and placeholders.
 
 == Changelog ==
+
+= 0.5.0 =
+* Adding ability to show only unread or archived links.
+* Adding ability to include thumbnail image in links list. 
+* Code tidy up.
 
 = 0.4.3 = 
 * Fixing an issue with link generator not having closing div. (Thanks to Myles Gray for catching this.)
