@@ -38,6 +38,13 @@ div.pwp-links-shortcode-image{
 	min-height: 125px;
 }
 
+p.pwp-featured-image{
+	height:100px;
+	width:100px;
+	background-size: cover;
+	background-position: 50% 50%, 50% 50%;
+}
+
 p.pwp-featured-image-placeholder{
 	height:100px;
 	width:100px;

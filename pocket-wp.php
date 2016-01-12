@@ -398,7 +398,7 @@ class PocketWP {
 				// Include featured image, if option selected
 				if (strtolower($image) == 'yes'){
 					if ($item[4] != ''){
-						$html[] = '<div class="pwp-featured-image-wrapper"><p class="pwp-featured-image-placeholder" style="background-image: url(' . $item[4] . '); background-size: cover; background-position: 50% 50%, 50% 50%;"></p></div>
+						$html[] = '<div class="pwp-featured-image-wrapper"><p class="pwp-featured-image" style="background-image: url(' . $item[4] . ');"></p></div>
 						<div class="pwp-links-shortcode-image">';
 					} else {
 						$html[] = '<div class="pwp-featured-image-wrapper"><p class="pwp-featured-image-placeholder"></p></div>
