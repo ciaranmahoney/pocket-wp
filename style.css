@@ -7,6 +7,14 @@ span#pwp_plugin_credit_widget {
 	font-size: 0.7em;
 }
 
+h4.pwp_title{
+	margin-bottom: 5px;	
+}
+
+p.pwp_author_list{
+	margin-bottom: 5px;
+}
+
 p.pwp_item_excerpt {
 	margin-bottom: 5px;
 }
@@ -16,6 +24,12 @@ span.pwp_tags {
 	padding: 3px;
 	border-radius: 3px;
 	font-size: 10px;
+	margin-right: 10px;
+	color: #515151;
+}
+
+span.pwp_authors {
+	font-size: 13px;
 	margin-right: 10px;
 	color: #515151;
 }

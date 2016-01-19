@@ -2,7 +2,7 @@
 Contributors: ciaranm
 Tags: links, pocket, shortcode, widget
 Requires at least: 3.0.1
-Tested up to: 4.1
+Tested up to: 4.4
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -57,6 +57,8 @@ The Widget is available to drag and drop into any widgetized sidebars. It has so
 
 `state: all, archive, unread // Choose the type of links to show. You can show only archived or unread links if you want.`
 
+`author: yes, no // Show the author of the post. If Pocket didn't not save an author, it will show two hyphens like so -- .`
+
 
 == Installation ==
 
@@ -79,8 +81,8 @@ Visit the [plugin website](http://ciaranmahoney.me/code/pocket-wp/?utm_campaign=
 
 = 0.5.0 =
 * Adding ability to show only unread or archived links.
-* Adding ability to include thumbnail image in links list. 
-* Code tidy up.
+* Adding thumbnail support for shortcode 
+* Adding author support for shortcode
 
 = 0.4.3 = 
 * Fixing an issue with link generator not having closing div. (Thanks to Myles Gray for catching this.)

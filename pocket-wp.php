@@ -344,6 +344,13 @@ class PocketWP {
 		    		$pwp_title = $item['given_url'];
 		    	}
 
+		    	// Check for author
+		    	if (isset($item['authors'] )){
+		    		$pwp_author = $item['authors'];
+				} else {
+					$pwp_author = '';
+				}
+
 		    	// Check for excerpt
 		    	if ($item['excerpt'] != ''){
 		    		$pwp_excerpt = $item['excerpt'];
@@ -368,7 +375,7 @@ class PocketWP {
 				}
 
 		    	array_push($pwp_links_output, 
-		    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags, $pwp_image)
+		    		array($pwp_url, $pwp_title, $pwp_excerpt, $pwp_tags, $pwp_image, $pwp_author)
 		    	);
 		    }
 			return $pwp_links_output;
@@ -383,7 +390,8 @@ class PocketWP {
 								 'tag_list' => '',
 								 'credit' => '',
 								 'image' => '',
-								 'state' => ''
+								 'state' => '',
+								 'author' => ''
 								), $atts 
 				)
 		);
@@ -410,7 +418,26 @@ class PocketWP {
 					$html[] = '<div class="pwp-links-shortcode">';
 				}
 
-				$html[] = '<h4><a href="' . $item[0] . '" class="pwp_item_sc_link" target="_blank">' . $item[1] . '</a></h4>';
+				$html[] = '<h4 class="pwp_title"><a href="' . $item[0] . '" class="pwp_item_sc_link" target="_blank">' . $item[1] . '</a></h4>';
+
+			  	// Display author list if author set to yes
+			  	if(strtolower($author) == 'yes') {
+			  		if($item[5] != ""){
+				  	  	$html[] = '<p class="pwp_author_list">';
+					  	foreach($item[5] as $author_list) {
+					  		$html[] = '<span class="pwp_authors">By ' . $author_list['name'] . '</span>';
+					  	}
+					  	$html[] ='</p>';
+
+					} else {
+						$html[] = '<p class="pwp_author_list"><span class="pwp_authors">--</span></p>';
+					}
+
+		  		} 
+
+		  		else { 
+		  			// Do Nothing
+		  		}
 				
 				//Display excerpt if excerpt is not set to no.	
 			   	if (strtolower($excerpt) != 'no'){
